@@ -1,0 +1,254 @@
+/* PC */
+
+div.modal_popup_wrap > div.modal_popup_bg{
+  position: fixed;
+  left:0px;
+  top:0px;
+  background-color: #000;
+  opacity: 0.3;
+  width:100vw;
+  height: 100vh;
+  z-index: 9;
+  display: none;
+}
+
+div.modal_popup_wrap > div.modal_popup{
+  width:364px;
+  /* height: 424px; */
+  border-radius: 28px;
+  position: fixed;
+  left:50%;
+  top:50%;
+  transform: translate(-50%, -50%);
+  /* background-image: url("https://image.mkt.golfzoncounty.com/lib/fe3211747364047a741773/m/1/a46ad3e2-06d7-4dce-b136-10c84ca7aac8.png"); */
+  background-size: contain;
+  z-index: 10;
+  display: none;
+}
+
+div.modal_popup_wrap > div.modal_popup > div.contents_inner_info{
+  width:100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  /* background-image: url("./images/back_bg.png");
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  background-size: contain; */
+  padding: 25px 0px;
+}
+
+div.modal_popup_wrap > div.modal_popup > div.contents_inner_info > span.contents_inner_info_area{
+  font-size: 20px;
+  color:#0054ff;
+  font-weight: bold;  
+  margin-bottom: 30px;
+}
+
+div.modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.contents_inner_info_title{
+  font-size: 42px;
+  margin-bottom: 20px;
+  color:#FFF;
+  line-height: 130%;
+}
+
+div.modal_popup_wrap > div.modal_popup > div.contents_inner_info > span.contents_inner_info_subtitle{
+  margin-bottom: 90px;
+  color:#d1f2ff;
+  font-size: 18px;
+}
+
+div.modal_popup_wrap > div.modal_popup > div.contents_inner_button{
+  background-color: #efefef;
+  display: flex;
+  padding: 20px 0px;
+  box-sizing: border-box;
+  margin-top: -5px;
+  border-radius: 0px 0px 28px 28px;
+}
+div.modal_popup_wrap > div.modal_popup > div.contents_inner_button > a{
+  width:50%;
+  text-align: center;
+  text-decoration: none;
+  color:#088af9;
+  border-right: 1px solid #d5d5d5;
+  font-weight: bold;
+}
+
+div.modal_popup_wrap > div.modal_popup > div.contents_inner_button > span{
+  width:50%;
+  text-align: center;
+  color:#878787;
+}
+
+/* Tablet */
+
+div.ta_modal_popup_wrap > div.modal_popup_bg{
+  position: fixed;
+  left:0px;
+  top:0px;
+  background-color: #000;
+  opacity: 0.3;
+  width:100vw;
+  height: 100vh;
+  z-index: 9;
+  display: none;
+}
+
+div.ta_modal_popup_wrap > div.modal_popup{
+  width:364px;
+  /* height: 424px; */
+  border-radius: 28px;
+  position: fixed;
+  left:50%;
+  top:50%;
+  transform: translate(-50%, -50%);
+  /* background-image: url("https://image.mkt.golfzoncounty.com/lib/fe3211747364047a741773/m/1/a46ad3e2-06d7-4dce-b136-10c84ca7aac8.png"); */
+  background-size: contain;
+  z-index: 10;
+  display: none;
+}
+
+div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_info{
+  width:100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  /* background-image: url("./images/back_bg.png");
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  background-size: contain; */
+  padding: 25px 0px;
+}
+
+div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_info > span.contents_inner_info_area{
+  font-size: 20px;
+  color:#0054ff;
+  font-weight: bold;  
+  margin-bottom: 30px;
+}
+
+div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.contents_inner_info_title{
+  font-size: 42px;
+  margin-bottom: 20px;
+  color:#FFF;
+  line-height: 130%;
+}
+
+div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_info > span.contents_inner_info_subtitle{
+  margin-bottom: 90px;
+  color:#d1f2ff;
+  font-size: 18px;
+}
+
+div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_button{
+  background-color: #efefef;
+  display: flex;
+  padding: 20px 0px;
+  box-sizing: border-box;
+  margin-top: -5px;
+  border-radius: 0px 0px 28px 28px;
+}
+div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_button > a{
+  width:50%;
+  text-align: center;
+  text-decoration: none;
+  color:#088af9;
+  border-right: 1px solid #d5d5d5;
+  font-weight: bold;
+}
+
+div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_button > span{
+  width:50%;
+  text-align: center;
+  color:#878787;
+}
+
+
+/* 모바일 */
+
+div.mo_modal_popup_wrap > div.mo_modal_popup_bg{
+  position: fixed;
+  left:0px;
+  top:0px;
+  background-color: #000;
+  opacity: 0.3;
+  width:100vw;
+  height: 100vh;
+  z-index: 9;
+  display: none;
+}
+
+div.mo_modal_popup_wrap > div.mo_modal_popup{
+  width:85.0926vw;
+  position: fixed;
+  left:50%;
+  top:50%;
+  transform: translate(-50%, -50%);
+  border-radius: 6.9444vw;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  z-index: 10;
+  display: none;
+}
+
+div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_info{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_info > span.contents_inner_info_area{
+  font-size: 3.8889vw;
+  color:#0054ff;
+  font-weight: bold;
+  box-sizing:border-box;
+  margin-top: 4.9074vw;
+  margin-bottom: 5.5556vw;
+}
+
+div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_info > div.contents_inner_info_title{
+  font-size: 9.7222vw;
+  margin-bottom: 2.7778vw;
+  color:#FFF;
+  line-height: 130%;
+}
+
+div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_info > span.contents_inner_info_subtitle{
+  margin-bottom: 33.3333vw;
+  font-size: 3.8889vw;
+  color:#d1f2ff;
+}
+
+div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_button{
+  background-color: #efefef;
+  display: flex;
+  padding: 3.7037vw 0px;
+  box-sizing: border-box;
+  margin-top: -5px;
+  border-radius: 0px 0px 6.9444vw 6.9444vw;
+}
+
+div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_button > a{
+  width:50%;
+  text-align: center;
+  text-decoration: none;
+  color:#088af9;
+  border-right: 1px solid #d5d5d5;
+  font-weight: bold;
+}
+
+div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_button > span{
+  width:50%;
+  text-align: center;
+  color:#878787;
+}
+
+
+
+

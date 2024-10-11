@@ -1,0 +1,120 @@
+/* PC */
+
+div.c11_banner_wrap{
+  margin-bottom: 30px;
+}
+
+div.c11_banner_wrap > p.favorites_golfzone{
+  color:#F39726;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+div.c11_banner_wrap > div.favorites_contents_box{
+  background-color: #FEF8EF;
+  width:100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px;
+  box-sizing: border-box;
+}
+
+div.c11_banner_wrap > div.favorites_contents_box > div.favorites_contents_info_box > div.favorites_contents_info{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+div.c11_banner_wrap > div.favorites_contents_box > div.favorites_contents_info_box > div.favorites_contents_info > div.favorites_contents_info_name_wrap{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+div.c11_banner_wrap > div.favorites_contents_box > div.favorites_contents_info_box > div.favorites_contents_info > div.favorites_contents_info_name_wrap > span.favorites_contents_info_name{
+  font-size: 25px;
+  font-weight: bold;
+}
+
+div.c11_banner_wrap > div.favorites_contents_box > div.favorites_contents_info_box > div.favorites_contents_info > div.favorites_contents_info_name_wrap > a.favorites_contents_info_randing{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  color:#01387f;
+  font-weight: bold;
+  letter-spacing: -0.02em;
+  font-family: 'Spoqa Han Sans Bold';
+}
+
+div.c11_banner_wrap > div.favorites_contents_box > div.favorites_contents_info_box > div.favorites_contents_info > div.favorites_contents_info_name_wrap > a.favorites_contents_info_randing:hover{
+  color:#F39726;
+
+}
+
+div.c11_banner_wrap > div.favorites_contents_box > div.favorites_contents_info_box > div.favorites_contents_info > div.favorites_contents_info_name_wrap > a.favorites_contents_info_randing > span.favorites_contents_info_randing_img{
+  width:25px;
+  height: 10px;
+  background-image: url("https://image.mkt.golfzoncounty.com/lib/fe3211747364047a741773/m/1/59d066ad-20b4-4163-b497-0b08d22ff854.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position:0;
+}
+
+div.c11_banner_wrap > div.favorites_contents_box > div.favorites_contents_info_box > div.favorites_contents_info > div.favorites_contents_info_hashtag_wrap{
+  color:#01387f;
+  font-size: 18px;
+}
+
+/* Mobile */
+
+div.c11_mo_banner_wrap{
+  padding-top: 20px;
+  box-sizing: border-box;
+}
+
+div.c11_mo_banner_wrap > p.favorites_golfzone{
+  font-size: 18px;
+  color:#333;
+  font-weight: bold;
+  padding-left: 20px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+div.c11_mo_banner_wrap > div.favorites_contents_box_wrap{
+  display: flex;
+  padding: 0px 20px;
+  box-sizing: border-box;
+}
+
+div.c11_mo_banner_wrap > div.favorites_contents_box_wrap > div.favorites_contents_box{
+  background-color: #2A64D8;
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3.3148vw;
+  box-sizing: border-box;
+  border-radius: 5px;
+}
+
+div.c11_mo_banner_wrap > div.favorites_contents_box_wrap > div.favorites_contents_box > a{
+  color:#FFF;
+}
+
+div.c11_mo_banner_wrap > div.favorites_contents_box_wrap > div.favorites_contents_box > div.favorites_contents_info_box{
+
+}
+
+div.c11_mo_banner_wrap > div.favorites_contents_box_wrap > div.favorites_contents_box > div.favorites_contents_info_box > div.favorites_contents_info > div.favorites_contents_info_name_wrap{
+  color:#FFF;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+div.c11_mo_banner_wrap > div.favorites_contents_box_wrap > div.favorites_contents_box > div.favorites_contents_info_box > div.favorites_contents_info > div.favorites_contents_info_hashtag_wrap{
+  color:#FFF;
+}
