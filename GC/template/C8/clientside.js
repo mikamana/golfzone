@@ -1,34 +1,3 @@
-/* // 감시할 대상 요소
-const targetNode = document.querySelector('.contents_inner_button');
-
-// 옵저버 설정: attributes와 attributeFilter 옵션을 설정하여 특정 속성만 감지
-// const config = { attributes: true, attributeFilter: ['class', 'style'], attributeOldValue: true };
-const config = { attributes: true, attributeFilter: ['class', 'style'] };
-
-// MutationObserver 생성
-const observer = new MutationObserver((mutationsList, observer) => {
-  // 감지된 모든 변화를 순회하며 처리
-  for (const mutation of mutationsList) {
-    if (mutation.type === 'attributes') {
-      // 변경된 속성 이름과 대상 요소 출력
-      console.log(`The ${mutation.attributeName} attribute was modified on:`, mutation.target);
-
-      // 속성 값이 변경되었는지 확인하고 출력
-      const oldValue = mutation.oldValue;  // 이전 속성 값 (옵션에서 oldValue 설정이 필요)
-      const newValue = mutation.target.getAttribute(mutation.attributeName);  // 현재 속성 값
-      console.log(`Old value: ${oldValue}, New value: ${newValue}`);
-    }
-  }
-});
-
-// 감시 시작
-observer.observe(targetNode, config);
-
-// 버튼 클릭 시 클래스 토글
-targetNode.addEventListener("click", () => {
-  targetNode.classList.toggle('new-class'); // class 속성 변경
-}); */
-
 (function () {
 
   function apply(context, template) {
@@ -180,6 +149,4 @@ targetNode.addEventListener("click", () => {
   });
 
 })();
-
-
 

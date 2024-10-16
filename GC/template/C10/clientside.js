@@ -5,10 +5,11 @@
     const { userGroup, triggerOptions, triggerOptionsNumber } = context || {};
     let statusNumC10 = 0;
 
-    function fnInitC10() {
+    function fnInitC10(context, template) {
       if (SalesforceInteractions.cashDom("#email").val() === "") return;
       if (SalesforceInteractions.cashDom("#golfzonNo").val() === "") return;
       if (SalesforceInteractions.cashDom('#evg-new-template-c12').length > 0) return;
+      if (context.attributes.attributes.couponName.value === "") return;
       if (window.innerWidth > 1080) {
         if (document.querySelector("#divpop") !== null) {
           if (document.querySelector("#divpop").style.visibility === "visible") {
@@ -17,7 +18,9 @@
             return false;
           } else if (SalesforceInteractions.cashDom("#evg-new-template-c8").length <= 0 && document.querySelector("#divpop").style.visibility === "hidden") {
             statusNumC10 = 2;
-          };
+          } else if (document.querySelector("#evg-new-template-c8") === null && document.querySelector("#divpop").style.visibility === "hidden") {
+            statusNumC10 = 2;
+          }
         } else {
           statusNumC10 = 2;
         }
@@ -49,7 +52,7 @@
       SalesforceInteractions.cashDom("#header").prepend(htmlArr[deviceIndex]);
     }
 
-    function fnApiInnerC10() {
+    function fnPopHide() {
       if (window.innerWidth > 1080) {
         setTimeout(() => {
           SalesforceInteractions.cashDom("#evg-new-template-c10.pc_push_popup").hide();
@@ -61,17 +64,38 @@
       }
     }
 
+    function fnApiInnerC10() {
+      const c10CouponName = context.attributes.attributes.couponName.value;
+      const c10CouponLength = parseInt(Number(context.attributes.attributes.couponLength.value));
+
+
+
+      SalesforceInteractions.cashDom(".coupon_name").text(c10CouponName);
+      SalesforceInteractions.cashDom(".coupon_length").text(c10CouponLength);
+
+    }
+
     function fnStartC10(context, template) {
-      fnInitC10();
-      if (fnInitC10() === undefined || !fnInitC10()) return;
+      fnInitC10(context, template);
+      if (fnInitC10(context, template) === undefined || !fnInitC10(context, template)) return;
       fnInsertC10(context, template);
       fnApiInnerC10();
+      fnPopHide();
     }
 
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         if (userGroup !== "Control") {
           fnStartC10(context, template);
+
+          if (document.querySelector(".leftB .close_btn") !== null) {
+            const popBtn = document.querySelector("#divpop .leftB .close_btn");
+            popBtn.addEventListener("click", (e) => {
+              setTimeout(() => {
+                fnStartC10(context, template);
+              }, 400);
+            })
+          }
           if (document.querySelector("#evtPop .btn2 button") !== null) {
             const popBtn = document.querySelectorAll("#evtPop .btn1 button, #evtPop .btn2 button");
             popBtn.forEach((btn, idx) => {
