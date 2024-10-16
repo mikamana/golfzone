@@ -1,5 +1,5 @@
 // 테스트 시간
-console.log("테스트 시간 24-10-14-20:11");
+console.log("테스트 시간 24-10-16-17:37");
 
 //접속 국가
 const getLocale = () => {
@@ -13,7 +13,6 @@ const getLocale = () => {
 // refferer
 const referrer = document.referrer;
 
-
 //골프ID 값 가져오기
 const getGolfId = () => {
 
@@ -22,11 +21,6 @@ const getGolfId = () => {
   return gcNum;
 
 }
-
-
-
-
-
 
 if (window.innerWidth > 1080) {
   if (SalesforceInteractions.cashDom("#header .util").find(".name").length > 0) {
@@ -77,23 +71,6 @@ if (allowedDomains.includes(domain)) {
 
     }, 1000);
 
-
-
-
-    //로그인 여부 확인
-    // const getLogin = () => {
-    //     setTimeout(() => {
-    //         const memberNum = SalesforceInteractions.cashDom("input#golfZonNo");
-    //         if(memberNum.length > 0 && SalesforceInteractions.cashDom(memberNum).val() !== "") {
-    //             sessionStorage.setItem("log", true)
-    //             return true;
-    //         } else {
-    //             sessionStorage.setItem("logBool", false)
-    //             return false;
-    //         }
-    //     }, 1000);
-    // }
-
     const sitemapConfig = {
       global: {
         locale: getLocale(),
@@ -122,8 +99,6 @@ if (allowedDomains.includes(domain)) {
             })
           }),
           SalesforceInteractions.listener("click", "#lououtHeader", () => {
-            //   const email = SalesforceInteractions.cashDom("#dwfrm_mcsubscribe_email").val();
-            //   if (email) {
             sessionStorage.setItem("log", false);
             SalesforceInteractions.sendEvent({
               interaction: { name: "로그아웃 클릭" },
@@ -216,6 +191,12 @@ if (allowedDomains.includes(domain)) {
             {
               name: "C11_PC_자주가는 골프장"
             },
+            {
+              name: "C12_PC_예약페이지이탈_PC시연"
+            },
+            {
+              name: "C12_tsettt"
+            }
           ]
         },
         {
@@ -465,33 +446,33 @@ if (allowedDomains.includes(domain)) {
           },
           interaction: {
             name: "PC_골프장요약 방문",
-            catalogObject: {
-              type: "GolfZone",
-              id: () => {
-                return getGolfId()
-              },
-              attributes: {
-                name: SalesforceInteractions.resolvers.fromSelector(".container_1200 .golf_top .golf_tit"), //골프장 이름
-                url: () => {
-                  // const seq = getGolfId();
-                  const url = window.location.href;
-                  return url;
-                },
-                imageUrl: () => {
-                  const img = SalesforceInteractions.cashDom(".swiper-container .swiper-wrapper .swiper-slide").find(".cimg")[0];
-                  const backgroundStyle = img.style.background;
-                  // 3. 정규식을 사용하여 URL 추출
-                  const urlMatch = backgroundStyle.match(/url\("(.+?)"\)/);
+            // catalogObject: {
+            //   type: "GolfZone",
+            //   id: () => {
+            //     return getGolfId()
+            //   },
+            //   attributes: {
+            //     name: SalesforceInteractions.resolvers.fromSelector(".container_1200 .golf_top .golf_tit"), //골프장 이름
+            //     url: () => {
+            //       // const seq = getGolfId();
+            //       const url = window.location.href;
+            //       return url;
+            //     },
+            //     imageUrl: () => {
+            //       const img = SalesforceInteractions.cashDom(".swiper-container .swiper-wrapper .swiper-slide").find(".cimg")[0];
+            //       const backgroundStyle = img.style.background;
+            //       // 3. 정규식을 사용하여 URL 추출
+            //       const urlMatch = backgroundStyle.match(/url\("(.+?)"\)/);
 
-                  // 4. URL 값이 존재하면 추출하여 변수에 저장
-                  const imgUrl = urlMatch ? urlMatch[1] : null;
-                  return imgUrl;
-                },
-                // rating: () => {
-                //     return SalesforceInteractions.cashDom(".tour-detail-view .course-info-wrap .review-num-area .star-score").text() //골프장 별점
-                // },
-              }
-            },
+            //       // 4. URL 값이 존재하면 추출하여 변수에 저장
+            //       const imgUrl = urlMatch ? urlMatch[1] : null;
+            //       return imgUrl;
+            //     },
+            //     // rating: () => {
+            //     //     return SalesforceInteractions.cashDom(".tour-detail-view .course-info-wrap .review-num-area .star-score").text() //골프장 별점
+            //     // },
+            //   }
+            // },
           },
         },
         {
@@ -1177,6 +1158,12 @@ if (allowedDomains.includes(domain)) {
             {
               name: "C11_MO_자주가는 골프장"
             },
+            {
+              name: "C12_PC_예약페이지이탈_MO시연"
+            },
+            {
+              name: "C12_tsetttmo"
+            }
           ]
         },
         {

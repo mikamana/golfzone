@@ -1,40 +1,105 @@
 (function () {
 
   function apply(context, template) {
-    const htmlArr = template(context).split("</br>");
+    const { userGroup, triggerOptions, triggerOptionsNumber } = context || {};
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (userGroup !== "Control") {
+          if (SalesforceInteractions.cashDom("#email").val() === "") return;
+          if (SalesforceInteractions.cashDom("#golfzonNo").val() === "") return;
+          if (context.attributes.attributes.favGolf.value === "" || context.attributes.attributes.favGolf.value === undefined || context.attributes.attributes.favGolf.value === null) return;
 
-    const device = window.innerWidth > 1080 ? "PC" : "mobile";
-    const deviceIndex = { "PC": 0, "mobile": 1 }[device];
+          const htmlArr = template(context).split("</br>");
 
-    setTimeout(() => {
-      if (device === "PC") {
-        SalesforceInteractions.cashDom(".reserve .reserve_top").after(htmlArr[deviceIndex]);
-      } else {
-        SalesforceInteractions.cashDom(".reserve #content .calendar").after(htmlArr[deviceIndex]);
-      }
-    }, 1000);
+          const device = window.innerWidth > 1080 ? "PC" : "mobile";
+          const deviceIndex = { "PC": 0, "mobile": 1 }[device];
 
-
-
-    /* 선호골프장 번호 받아서 아래 패치에 적용 후 data에 있는 값들 innerHTML로 적용시키기 */
-
-    // const gcFavNum = context.attributes.attributes.favGolf.value
+          if (device === "PC") {
+            SalesforceInteractions.cashDom(".reserve .reserve_top").after(htmlArr[deviceIndex]);
+          } else {
+            SalesforceInteractions.cashDom(".reserve #content .calendar").after(htmlArr[deviceIndex]);
+          }
 
 
-    // fetch(`https://www.golfzoncounty.com/member_api/mingreenfeelist?gc_no=${gcFavNum}&chnl=w`)
-    // .then((res)=> res.json())
-    // .then((data)=>{
+          if (context.attributes.attributes.favGolf.value !== "") {
+            const gcFavNum = context.attributes.attributes.favGolf.value
+            if (window.innerWidth > 1080) {
+              fetch(`https://www.golfzoncounty.com/member_api/mingreenfeelist?gc_no=${gcFavNum}&chnl=w`)
+                .then((res) => res.json())
+                .then((data) => {
 
-    //     console.log(data);
 
-    // })
+
+                  const golfZoneName = data.entitys[0].golfclub_name;
+                  const golfZoneHashTag = data.entitys[0].hash;
+                  const golfZoneUrl = data.entitys[0].reserve_url;
+                  const golfZoneHash = golfZoneHashTag.split(",");
+                  let hashArr = [];
+
+                  golfZoneHash.forEach((node, idx) => {
+                    const hashTag = "#" + node
+                    hashArr.push(hashTag);
+
+                  })
+
+                  const hash = hashArr.join(" ");
+                  SalesforceInteractions.cashDom(".favorites_contents_info_hashtag_wrap").text(hash);
+                  SalesforceInteractions.cashDom(".favorites_contents_info_name").text(golfZoneName);
+                  SalesforceInteractions.cashDom(".favorites_contents_info_randing")[0].attributes.href.value = golfZoneUrl;
+                  SalesforceInteractions.cashDom(".favorites_contents_info_randing_ttime")[0].attributes.href.value = golfZoneUrl;
+                })
+            } else {
+              fetch(`https://www.golfzoncounty.com/member_api/mingreenfeelist?gc_no=${gcFavNum}&chnl=w`)
+                .then((res) => res.json())
+                .then((data) => {
+
+                  const golfZoneName = data.entitys[0].golfclub_name;
+                  const golfZoneHashTag = data.entitys[0].hash;
+                  const golfZoneUrl = data.entitys[0].reserve_url;
+
+                  function replaceWWWwithM(url) {
+                    if (url.includes("www.")) {
+                      return url.replace("www.", "m.");
+                    } else {
+                      console.warn("URL에 'www.'가 포함되어 있지 않습니다.");
+                      return url;
+                    }
+                  }
+                  const mobileUrl = replaceWWWwithM(golfZoneUrl);
+                  console.log(mobileUrl);
+                  SalesforceInteractions.cashDom(".c11_mo_banner_wrap .favorites_contents_info_randing_ttime")[0].attributes.href.value = mobileUrl;
+
+                  const golfZoneHash = golfZoneHashTag.split(",");
+                  let hashArr = [];
+                  golfZoneHash.forEach((node, idx) => {
+                    const hashTag = "#" + node
+                    hashArr.push(hashTag);
+                  })
+                  const hash = hashArr.join(" ");
+                  SalesforceInteractions.cashDom(".c11_mo_banner_wrap .favorites_contents_info_hashtag_wrap").text(hash);
+                  SalesforceInteractions.cashDom(".c11_mo_banner_wrap .favorites_contents_info_name").text(golfZoneName);
+
+                  console.log(golfZoneUrl);
+
+
+
+
+                })
+            }
+          }
+
+        }
+        resolve(true);
+      }, 500);
+    })
+
 
   }
 
   function reset(context, template) {
 
     /** Remove the template from the DOM to reset the template. */
-    Evergage.cashDom("#evg-new-template").remove();
+    Evergage.cashDom("#evg-new-template-c11").remove();
   }
 
   function control(context) {

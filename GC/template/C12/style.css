@@ -8,6 +8,8 @@ div.pc_push_popup{
   z-index: 11;
   animation-duration: 0.3s;
   animation-name: slidein;
+  padding: 0px 20px;
+  box-sizing: border-box;
 }
 
 div.pc_push_popup > a.push_popup{
@@ -50,6 +52,7 @@ div.mo_push_popup{
   animation-duration: 0.5s;
   animation-name: mo_slidein;
   padding: 0px 20px;
+  box-sizing: border-box;
 }
 
 div.mo_push_popup > a.push_popup{
@@ -70,7 +73,7 @@ div.mo_push_popup > a.push_popup > div.push_text{
 display: flex;
 flex-direction: column;
 gap: 10px;
-
+font-size: 14px;
 }
 
 div.mo_push_popup > a.push_popup > div.push_image_wrap > img.push_image{

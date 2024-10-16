@@ -33,150 +33,117 @@ targetNode.addEventListener("click", () => {
 
   function apply(context, template) {
 
+    const { userGroup, triggerOptions, triggerOptionsNumber } = context || {};
+
     const htmlArr = template(context).split("</br>");
     const device = window.innerWidth > 1220 ? "PC" : window.innerWidth >= 768 ? "Tablet" : "Mobile";
     const deviceIndex = { "PC": 0, "Tablet": 1, "Mobile": 2 }[device];
-    if (deviceIndex === 0) {
-      SalesforceInteractions.cashDom("body").append(htmlArr[deviceIndex]);
-    } else {
-      SalesforceInteractions.cashDom("#wrap #content").append(htmlArr[deviceIndex]);
+
+    function fnInitC8() {
+      if (SalesforceInteractions.cashDom("#email").val() === "") return;
+      if (SalesforceInteractions.cashDom("#golfzonNo").val() === "") return;
+      return true;
     }
 
-    const wrap = SalesforceInteractions.cashDom("#evg-new-template-c8");
-    const btn = document.querySelectorAll(".contents_inner_button_left_btn, .contents_inner_button_right_btn");
-
-    btn.forEach((node, idx) => {
-
-      node.addEventListener("click", (e) => {
-
-        wrap.remove();
-
-      })
-
-    });
-
-    /* 
-        팝업 상태가 visibility: hidden; 이거나,
-        닫기를 클릭하거나
-        오늘 하루 보지 않기를 클릭하면 나오도록 해야함
-        
-        div.divpop 팝업 상태가 visibility: visible;이면 0
-        div.divpop 팝업 상태가 visibility: hidden;이면 1
-        
-        모바일은 div.evtPop 팝업 상태가 display = none;이면 0
-        div.evtPop 팝업 상태가 display = none;이면 1
-
-        닫기를 클릭하면 2
-
-        0이 아니면 나오도록 작업하기
-
-     */
-
-    window.addEventListener("load", () => {
+    function fnInsertC8(context, template) {
 
       if (deviceIndex === 0) {
+        SalesforceInteractions.cashDom("body").append(htmlArr[deviceIndex]);
+      } else {
+        SalesforceInteractions.cashDom("#wrap #content").append(htmlArr[deviceIndex]);
+      }
+    }
+
+    function fnRemoveC8() {
+      const wrap = SalesforceInteractions.cashDom("#evg-new-template-c8");
+      const btn = document.querySelectorAll(".contents_inner_button_left_btn, .contents_inner_button_right_btn");
+      btn.forEach((node, idx) => {
+        node.addEventListener("click", (e) => {
+          wrap.remove();
+        })
+      });
+    }
+
+    function fnShowPopUpC8() {
+      if (deviceIndex === 0) {
         let stateNum = 0;
-
         if (document.querySelector("#divpop").style.visibility === "hidden") {
-
           stateNum = 1;
         }
-
         document.querySelector("a.close_btn").addEventListener("click", (e) => {
-
           stateNum = 2;
           if (stateNum !== 0) {
             document.querySelector(".c8_modal_popup_wrap").style.display = "block";
           }
-
         });
-
         if (stateNum !== 0) {
-          console.log(stateNum);
           document.querySelector(".c8_modal_popup_wrap").style.display = "block";
         }
-
       } else if (deviceIndex === 1) {
         let stateNum = 0;
-
         if (document.querySelector("#evtPop").style.display === "none") {
-
           stateNum = 1;
-
         }
 
         document.querySelector("button.close").addEventListener("click", (e) => {
-
           stateNum = 2;
           if (stateNum !== 0) {
             document.querySelector(".c8_tab_modal_popup_wrap").style.display = "block";
           }
-
         });
 
         document.querySelector("button.today").addEventListener("click", (e) => {
-
           stateNum = 3;
-
           if (stateNum !== 0) {
             document.querySelector(".c8_tab_modal_popup_wrap").style.display = "block";
           }
-
         });
 
         if (stateNum !== 0) {
           document.querySelector(".c8_tab_modal_popup_wrap").style.display = "block";
         }
       } else if (deviceIndex === 2) {
-        console.log("test1");
         let stateNum = 0;
-
         if (document.querySelector("#evtPop").style.display === "none") {
-
           stateNum = 1;
-
         }
-
         document.querySelector("button.close").addEventListener("click", (e) => {
           stateNum = 2;
-          console.log(stateNum);
-
           if (stateNum !== 0) {
-
             document.querySelector(".c8_mo_modal_popup_wrap").style.display = "block";
-
           }
-
         });
-
         document.querySelector("button.today").addEventListener("click", (e) => {
-
           stateNum = 3;
-
           if (stateNum !== 0) {
             document.querySelector(".c8_tab_modal_popup_wrap").style.display = "block";
           }
-
         })
-
         if (stateNum !== 0) {
-
           document.querySelector(".c8_mo_modal_popup_wrap").style.display = "block";
-
         }
-
-
       }
+    }
+
+    function fnStartC8(context, template) {
+      fnInitC8();
+      if (fnInitC8() === undefined) return;
+      fnInsertC8(context, template);
+      fnRemoveC8();
+      fnShowPopUpC8();
+    }
 
 
-    })
 
 
-
-
-
-
-
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (userGroup !== "Control") {
+          fnStartC8();
+        }
+      }, 100)
+      resolve(true);
+    });
 
   }
 
@@ -213,4 +180,6 @@ targetNode.addEventListener("click", () => {
   });
 
 })();
+
+
 

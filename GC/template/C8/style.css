@@ -1,3 +1,8 @@
+/* All */
+div.contents_inner_button_right_btn, div.contents_inner_button_left_btn{
+  cursor: pointer;
+}
+
 /* PC */
 
 div.c8_modal_popup_wrap{
@@ -47,7 +52,7 @@ div.c8_modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.conten
   margin-bottom: 40px;
 }
 
-div.c8_modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.contents_inner_info_subtitle{
+div.c8_modal_popup_wrap > div.modal_popup > div.contents_inner_info > a.contents_inner_info_subtitle{
   width: 170px;
   padding: 15px 30px;
   box-sizing: border-box;
@@ -56,6 +61,7 @@ div.c8_modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.conten
   color:#FFF;
   margin-bottom: 110px;
   text-align: center;
+  display: block;
 }
 
 div.c8_modal_popup_wrap > div.modal_popup > div.contents_inner_button{
@@ -67,6 +73,8 @@ div.c8_modal_popup_wrap > div.modal_popup > div.contents_inner_button{
   border-radius: 0px 0px 28px 28px;
   justify-content: space-between;
 }
+
+
 
 /* Tablet */
 
@@ -117,7 +125,7 @@ div.c8_tab_modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.co
   margin-bottom: 40px;
 }
 
-div.c8_tab_modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.contents_inner_info_subtitle{
+div.c8_tab_modal_popup_wrap > div.modal_popup > div.contents_inner_info > a.contents_inner_info_subtitle{
   width: 170px;
   padding: 15px 30px;
   box-sizing: border-box;
@@ -126,6 +134,7 @@ div.c8_tab_modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.co
   color:#FFF;
   margin-bottom: 110px;
   text-align: center;
+  display: block;
 }
 
 div.c8_tab_modal_popup_wrap > div.modal_popup > div.contents_inner_button{
@@ -186,7 +195,7 @@ div.c8_mo_modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.con
 
 }
 
-div.c8_mo_modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.contents_inner_info_subtitle{
+div.c8_mo_modal_popup_wrap > div.modal_popup > div.contents_inner_info > a.contents_inner_info_subtitle{
   width:37.0370vw;
   padding: 3.2407vw 7.4074vw;
   box-sizing: border-box;
@@ -194,6 +203,7 @@ div.c8_mo_modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.con
   color:#FFF;
   background-color: #2a64d8;
   border-radius: 4.1667vw;
+  display: block;
 }
 
 div.c8_mo_modal_popup_wrap > div.modal_popup > div.contents_inner_button{

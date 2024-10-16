@@ -1,3 +1,9 @@
+/* All */
+
+div.contents_inner_info_image_button, p.contents_inner_info_title_today_btn{
+  cursor: pointer;
+}
+
 /* PC */
 
 div.modal_popup_wrap > div.modal_popup_bg{
@@ -20,7 +26,6 @@ div.modal_popup_wrap > div.modal_popup{
   left:50%;
   top:50%;
   transform: translate(-50%, -50%);
-  /* background-image: url("https://image.mkt.golfzoncounty.com/lib/fe3211747364047a741773/m/1/a46ad3e2-06d7-4dce-b136-10c84ca7aac8.png"); */
   background-size: contain;
   z-index: 10;
   display: none;
@@ -32,25 +37,61 @@ div.modal_popup_wrap > div.modal_popup > div.contents_inner_info{
   flex-direction: column;
   align-items: center;
   text-align: center;
-  /* background-image: url("./images/back_bg.png");
+  background-color: #efefef;
+  border-radius: 28px 28px 0px 0px;
+  position: relative;
+}
+
+div.modal_popup_wrap > div.modal_popup > div.contents_inner_info > span.contents_inner_info_recom{
+  color: #838383;
+  font-size: 18px;
+  text-shadow: 1px #fff;
+  margin:25px 0px;
+}
+
+div.modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.contents_inner_info_image_wrap{
+  width:100%;
+  height: 200px;
+  border-radius: 20px 20px 0px 0px;
+  padding: 10px;
+  box-sizing: border-box;
+  position: relative;
+}
+div.modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.contents_inner_info_image_wrap > div.contents_inner_info_image_button{
+  position: absolute;
+  right: 30px;
+  top:30px;
+  color:#FFF;
+  font-size: 24px;
+}
+
+div.modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.contents_inner_info_image_wrap > div.contents_inner_info_image{
+  width:100%;
+  height: 100%;
   background-position: 0 0;
   background-repeat: no-repeat;
-  background-size: contain; */
-  padding: 25px 0px;
+  background-size: cover;
+  border-radius: 28px 28px 0px 0px;
 }
 
-div.modal_popup_wrap > div.modal_popup > div.contents_inner_info > span.contents_inner_info_area{
-  font-size: 20px;
-  color:#0054ff;
-  font-weight: bold;  
-  margin-bottom: 30px;
-}
+
 
 div.modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.contents_inner_info_title{
-  font-size: 42px;
-  margin-bottom: 20px;
-  color:#FFF;
-  line-height: 130%;
+  font-size: 20px;
+  display: flex;
+  flex-direction: column;
+  color:#000;
+  gap: 8px;
+  padding-bottom: 65px;
+  font-weight: 600;
+}
+
+div.modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.contents_inner_info_title > p.contents_inner_info_title_today_btn{
+  position: absolute;
+  left:20px;
+  bottom: 20px;
+  font-size: 14px;
+  font-weight: normal;
 }
 
 div.modal_popup_wrap > div.modal_popup > div.contents_inner_info > span.contents_inner_info_subtitle{
@@ -60,26 +101,22 @@ div.modal_popup_wrap > div.modal_popup > div.contents_inner_info > span.contents
 }
 
 div.modal_popup_wrap > div.modal_popup > div.contents_inner_button{
-  background-color: #efefef;
-  display: flex;
+  background-color: #088af9;
   padding: 20px 0px;
   box-sizing: border-box;
   margin-top: -5px;
   border-radius: 0px 0px 28px 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 div.modal_popup_wrap > div.modal_popup > div.contents_inner_button > a{
-  width:50%;
+  width:100%;
+  height: 100%;
   text-align: center;
   text-decoration: none;
-  color:#088af9;
-  border-right: 1px solid #d5d5d5;
+  color:#fff;
   font-weight: bold;
-}
-
-div.modal_popup_wrap > div.modal_popup > div.contents_inner_button > span{
-  width:50%;
-  text-align: center;
-  color:#878787;
 }
 
 /* Tablet */
@@ -104,7 +141,6 @@ div.ta_modal_popup_wrap > div.modal_popup{
   left:50%;
   top:50%;
   transform: translate(-50%, -50%);
-  /* background-image: url("https://image.mkt.golfzoncounty.com/lib/fe3211747364047a741773/m/1/a46ad3e2-06d7-4dce-b136-10c84ca7aac8.png"); */
   background-size: contain;
   z-index: 10;
   display: none;
@@ -116,25 +152,61 @@ div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_info{
   flex-direction: column;
   align-items: center;
   text-align: center;
-  /* background-image: url("./images/back_bg.png");
+  background-color: #efefef;
+  border-radius: 28px 28px 0px 0px;
+  position: relative;
+}
+
+div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_info > span.contents_inner_info_recom{
+  color: #838383;
+  font-size: 18px;
+  text-shadow: 1px #fff;
+  margin:25px 0px;
+}
+
+div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.contents_inner_info_image_wrap{
+  width:100%;
+  height: 200px;
+  border-radius: 20px 20px 0px 0px;
+  padding: 10px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.contents_inner_info_image_wrap > div.contents_inner_info_image_button{
+  position: absolute;
+  right: 30px;
+  top:30px;
+  color:#FFF;
+  font-size: 24px;
+}
+
+div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.contents_inner_info_image_wrap > div.contents_inner_info_image{
+  width:100%;
+  height: 100%;
   background-position: 0 0;
   background-repeat: no-repeat;
-  background-size: contain; */
-  padding: 25px 0px;
+  background-size: cover;
+  border-radius: 28px 28px 0px 0px;
 }
 
-div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_info > span.contents_inner_info_area{
-  font-size: 20px;
-  color:#0054ff;
-  font-weight: bold;  
-  margin-bottom: 30px;
-}
+
 
 div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.contents_inner_info_title{
-  font-size: 42px;
-  margin-bottom: 20px;
-  color:#FFF;
-  line-height: 130%;
+  font-size: 20px;
+  display: flex;
+  flex-direction: column;
+  color:#000;
+  gap: 8px;
+  padding-bottom: 65px;
+}
+
+div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_info > div.contents_inner_info_title > p.contents_inner_info_title_today_btn{
+  position: absolute;
+  left:20px;
+  bottom: 20px;
+  font-size: 14px;
+  font-weight: normal;
 }
 
 div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_info > span.contents_inner_info_subtitle{
@@ -144,27 +216,24 @@ div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_info > span.conte
 }
 
 div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_button{
-  background-color: #efefef;
-  display: flex;
+  background-color: #088af9;
   padding: 20px 0px;
   box-sizing: border-box;
   margin-top: -5px;
   border-radius: 0px 0px 28px 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_button > a{
-  width:50%;
+  width:100%;
+  height: 100%;
   text-align: center;
   text-decoration: none;
-  color:#088af9;
-  border-right: 1px solid #d5d5d5;
+  color:#fff;
   font-weight: bold;
 }
 
-div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_button > span{
-  width:50%;
-  text-align: center;
-  color:#878787;
-}
 
 
 /* 모바일 */
@@ -192,62 +261,105 @@ div.mo_modal_popup_wrap > div.mo_modal_popup{
   background-repeat: no-repeat;
   background-size: cover;
   z-index: 10;
-  display: none;
+  /* display: none; */
 }
 
 div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_info{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+  background-color: #efefef;
+  border-radius: 28px 28px 0px 0px;
+  box-sizing: border-box;
+}
+div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_info > div.contents_inner_info_image_wrap{
+  position: relative;
+  width:100%;
+  border-radius: 28px 28px 0px 0px;
+  padding: 0.9259vw;
   box-sizing: border-box;
 }
 
-div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_info > span.contents_inner_info_area{
-  font-size: 3.8889vw;
-  color:#0054ff;
-  font-weight: bold;
-  box-sizing:border-box;
-  margin-top: 4.9074vw;
-  margin-bottom: 5.5556vw;
+div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_info > div.contents_inner_info_image_wrap > div.contents_inner_info_image{
+  width:100%;
+  height: 38.8889vw;
+  border-radius: 28px 28px 0px 0px;
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_info > div.contents_inner_info_image_wrap > div.contents_inner_info_image_button{
+  position: absolute;
+  right: 4.7778vw;
+  top:4.7778vw;
+  color:#FFF;
+  font-size: 5.7037vw;
+}
+
+div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_info > span.contents_inner_info_recom{
+  color: #838383;
+  font-size: 3.7963vw;
+  display: block;
+  text-shadow: 1px #fff;
+  margin:4.6296vw auto;
+  text-align: center;
 }
 
 div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_info > div.contents_inner_info_title{
-  font-size: 9.7222vw;
-  margin-bottom: 2.7778vw;
-  color:#FFF;
-  line-height: 130%;
+  font-size: 3.7037vw;
+  color:#000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7407vw;
+  padding-bottom: 12.0185vw;
+  box-sizing: border-box;
+  font-weight: 600;
+  position: relative;
 }
 
-div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_info > span.contents_inner_info_subtitle{
-  margin-bottom: 33.3333vw;
-  font-size: 3.8889vw;
-  color:#d1f2ff;
+div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_info > div.contents_inner_info_title > p.contents_inner_info_title_today_btn{
+  font-size: 3vw;
+  position: absolute;
+  left:2.8519vw;
+  bottom: 2.8519vw;
+  font-weight: normal;
 }
 
 div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_button{
-  background-color: #efefef;
-  display: flex;
-  padding: 3.7037vw 0px;
+  background-color: #088af9;
+  padding: 1.8519vw 0px;
   box-sizing: border-box;
   margin-top: -5px;
-  border-radius: 0px 0px 6.9444vw 6.9444vw;
+  border-radius: 0px 0px 28px 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_button > a{
-  width:50%;
+  width:100%;
+  height: 100%;
   text-align: center;
   text-decoration: none;
-  color:#088af9;
-  border-right: 1px solid #d5d5d5;
+  color:#fff;
   font-weight: bold;
+  font-size: 3.7037vw;
+  
 }
 
-div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_button > span{
-  width:50%;
-  text-align: center;
-  color:#878787;
-}
+/* 
+
+
+
+
+
+
+
+
+
+
+
+
+*/
 
 
 

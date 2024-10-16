@@ -68,6 +68,10 @@ div.c11_banner_wrap > div.favorites_contents_box > div.favorites_contents_info_b
   font-size: 18px;
 }
 
+div.c11_banner_wrap > div.favorites_contents_box > .favorites_contents_info_randing_ttime{
+  font-size: 16px;
+}
+
 /* Mobile */
 
 div.c11_mo_banner_wrap{
@@ -76,7 +80,7 @@ div.c11_mo_banner_wrap{
 }
 
 div.c11_mo_banner_wrap > p.favorites_golfzone{
-  font-size: 18px;
+  font-size: 16px;
   color:#333;
   font-weight: bold;
   padding-left: 20px;
@@ -112,9 +116,14 @@ div.c11_mo_banner_wrap > div.favorites_contents_box_wrap > div.favorites_content
 div.c11_mo_banner_wrap > div.favorites_contents_box_wrap > div.favorites_contents_box > div.favorites_contents_info_box > div.favorites_contents_info > div.favorites_contents_info_name_wrap{
   color:#FFF;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 div.c11_mo_banner_wrap > div.favorites_contents_box_wrap > div.favorites_contents_box > div.favorites_contents_info_box > div.favorites_contents_info > div.favorites_contents_info_hashtag_wrap{
   color:#FFF;
+  font-size: 14px;
+}
+
+div.c11_mo_banner_wrap > div.favorites_contents_box > .favorites_contents_info_randing_ttime{
+  font-size: 14px;
 }
