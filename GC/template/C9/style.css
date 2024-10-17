@@ -15,7 +15,7 @@ div.modal_popup_wrap > div.modal_popup_bg{
   width:100vw;
   height: 100vh;
   z-index: 9;
-  display: none;
+  display: block;
 }
 
 div.modal_popup_wrap > div.modal_popup{
@@ -28,7 +28,7 @@ div.modal_popup_wrap > div.modal_popup{
   transform: translate(-50%, -50%);
   background-size: contain;
   z-index: 10;
-  display: none;
+  display: block;
 }
 
 div.modal_popup_wrap > div.modal_popup > div.contents_inner_info{
@@ -130,7 +130,7 @@ div.ta_modal_popup_wrap > div.modal_popup_bg{
   width:100vw;
   height: 100vh;
   z-index: 9;
-  display: none;
+  display: block;
 }
 
 div.ta_modal_popup_wrap > div.modal_popup{
@@ -143,7 +143,7 @@ div.ta_modal_popup_wrap > div.modal_popup{
   transform: translate(-50%, -50%);
   background-size: contain;
   z-index: 10;
-  display: none;
+  display: block;
 }
 
 div.ta_modal_popup_wrap > div.modal_popup > div.contents_inner_info{
@@ -247,7 +247,7 @@ div.mo_modal_popup_wrap > div.mo_modal_popup_bg{
   width:100vw;
   height: 100vh;
   z-index: 9;
-  display: none;
+  display: block;
 }
 
 div.mo_modal_popup_wrap > div.mo_modal_popup{
@@ -261,7 +261,7 @@ div.mo_modal_popup_wrap > div.mo_modal_popup{
   background-repeat: no-repeat;
   background-size: cover;
   z-index: 10;
-  /* display: none; */
+  display: block;
 }
 
 div.mo_modal_popup_wrap > div.mo_modal_popup > div.contents_inner_info{

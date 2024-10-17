@@ -1,9 +1,8 @@
 (function () {
 
   function apply(context, template) {
-
+    console.log("C8번 실행");
     const { userGroup, triggerOptions, triggerOptionsNumber } = context || {};
-
     const htmlArr = template(context).split("</br>");
     const device = window.innerWidth > 1220 ? "PC" : window.innerWidth >= 768 ? "Tablet" : "Mobile";
     const deviceIndex = { "PC": 0, "Tablet": 1, "Mobile": 2 }[device];
@@ -11,6 +10,21 @@
     function fnInitC8() {
       if (SalesforceInteractions.cashDom("#email").val() === "") return;
       if (SalesforceInteractions.cashDom("#golfzonNo").val() === "") return;
+      if (SalesforceInteractions.cashDom("#evg-new-template-c9").length > 0) return;
+      if (SalesforceInteractions.cashDom("#evg-new-template-c8").length > 0) return;
+      if (deviceIndex === 0) {
+        if (document.querySelector("#divpop").style.visibility === "visible") return;
+      } else if (deviceIndex === 1 || deviceIndex === 2) {
+        if (document.querySelector("#evtPop") !== null) {
+          // setTimeout(()=>{
+          if (document.querySelector("#evtPop").style.display === "block") {
+            return false;
+          } else {
+            return true;
+          }
+          // },50);
+        }
+      }
       return true;
     }
 
@@ -21,6 +35,13 @@
       } else {
         SalesforceInteractions.cashDom("#wrap #content").append(htmlArr[deviceIndex]);
       }
+
+      SalesforceInteractions.sendEvent({
+        interaction: {
+          name: "[시나리오] C8 - 신규 가입 고객 대상 예약 유도 실행"
+        }
+      })
+
     }
 
     function fnRemoveC8() {
@@ -28,89 +49,60 @@
       const btn = document.querySelectorAll(".contents_inner_button_left_btn, .contents_inner_button_right_btn");
       btn.forEach((node, idx) => {
         node.addEventListener("click", (e) => {
+          console.log(e.target.classList.value);
+          if (e.target.classList.value === "contents_inner_button_left_btn") {
+            SalesforceInteractions.sendEvent({
+              interaction: {
+                name: "[시나리오] C8 - 오늘 하루 보지 않기 클릭"
+              }
+            })
+          }
           wrap.remove();
         })
       });
     }
 
-    function fnShowPopUpC8() {
-      if (deviceIndex === 0) {
-        let stateNum = 0;
-        if (document.querySelector("#divpop").style.visibility === "hidden") {
-          stateNum = 1;
-        }
-        document.querySelector("a.close_btn").addEventListener("click", (e) => {
-          stateNum = 2;
-          if (stateNum !== 0) {
-            document.querySelector(".c8_modal_popup_wrap").style.display = "block";
-          }
-        });
-        if (stateNum !== 0) {
-          document.querySelector(".c8_modal_popup_wrap").style.display = "block";
-        }
-      } else if (deviceIndex === 1) {
-        let stateNum = 0;
-        if (document.querySelector("#evtPop").style.display === "none") {
-          stateNum = 1;
-        }
-
-        document.querySelector("button.close").addEventListener("click", (e) => {
-          stateNum = 2;
-          if (stateNum !== 0) {
-            document.querySelector(".c8_tab_modal_popup_wrap").style.display = "block";
-          }
-        });
-
-        document.querySelector("button.today").addEventListener("click", (e) => {
-          stateNum = 3;
-          if (stateNum !== 0) {
-            document.querySelector(".c8_tab_modal_popup_wrap").style.display = "block";
-          }
-        });
-
-        if (stateNum !== 0) {
-          document.querySelector(".c8_tab_modal_popup_wrap").style.display = "block";
-        }
-      } else if (deviceIndex === 2) {
-        let stateNum = 0;
-        if (document.querySelector("#evtPop").style.display === "none") {
-          stateNum = 1;
-        }
-        document.querySelector("button.close").addEventListener("click", (e) => {
-          stateNum = 2;
-          if (stateNum !== 0) {
-            document.querySelector(".c8_mo_modal_popup_wrap").style.display = "block";
-          }
-        });
-        document.querySelector("button.today").addEventListener("click", (e) => {
-          stateNum = 3;
-          if (stateNum !== 0) {
-            document.querySelector(".c8_tab_modal_popup_wrap").style.display = "block";
-          }
-        })
-        if (stateNum !== 0) {
-          document.querySelector(".c8_mo_modal_popup_wrap").style.display = "block";
-        }
-      }
-    }
-
     function fnStartC8(context, template) {
       fnInitC8();
-      if (fnInitC8() === undefined) return;
+      if (fnInitC8() === undefined || fnInitC8() === false) return;
       fnInsertC8(context, template);
       fnRemoveC8();
-      fnShowPopUpC8();
     }
 
 
 
 
     return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (userGroup !== "Control") {
-          fnStartC8();
-        }
-      }, 100)
+      console.log("test0");
+      window.addEventListener("load", (e) => {
+        setTimeout(() => {
+          if (userGroup !== "Control") {
+            fnStartC8();
+
+            if (deviceIndex === 0) {
+              document.querySelector("a.close_btn").addEventListener("click", (e) => {
+                setTimeout(() => {
+                  fnStartC8();
+                }, 1000);
+              })
+
+            } else if (deviceIndex === 1 || deviceIndex === 2) {
+              document.querySelector("button.close").addEventListener("click", (e) => {
+                setTimeout(() => {
+                  fnStartC8();
+                }, 1000);
+              })
+              document.querySelector("button.today").addEventListener("click", (e) => {
+                setTimeout(() => {
+                  fnStartC8();
+                }, 1500);
+              })
+
+            }
+          }
+        }, 700)
+      })
+      console.log("test1");
       resolve(true);
     });
 

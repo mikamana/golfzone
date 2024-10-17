@@ -1,5 +1,5 @@
 // 테스트 시간
-console.log("테스트 시간 24-10-16-17:37");
+console.log("테스트 시간 24-10-17-09:30");
 
 //접속 국가
 const getLocale = () => {
@@ -116,7 +116,10 @@ if (allowedDomains.includes(domain)) {
             name: "C9_All_마지막라운드"
           },
           {
-            name: "C12_All_예약이탈다음", selector: "#header"
+            name: "C12_All_예약이탈다음"
+          },
+          {
+            name: "C12_All_예약이탈"
           },
         ]
       },

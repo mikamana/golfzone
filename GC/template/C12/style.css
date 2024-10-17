@@ -4,8 +4,9 @@ div.pc_push_popup{
   width:1220px;
   position: fixed;
   left:50%;
+  top:0px;
   transform: translateX(-50%);
-  z-index: 11;
+  z-index: 100;
   animation-duration: 0.3s;
   animation-name: slidein;
   padding: 0px 20px;

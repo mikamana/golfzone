@@ -6,7 +6,7 @@ div.contents_inner_button_right_btn, div.contents_inner_button_left_btn{
 /* PC */
 
 div.c8_modal_popup_wrap{
-  display: none;
+  /* display: none; */
 }
 
 div.c8_modal_popup_wrap > div.modal_popup_bg{
@@ -79,7 +79,7 @@ div.c8_modal_popup_wrap > div.modal_popup > div.contents_inner_button{
 /* Tablet */
 
 div.c8_tab_modal_popup_wrap{
-  display: none;
+  /* display: none; */
 }
 
 div.c8_tab_modal_popup_wrap > div.modal_popup_bg{
@@ -152,7 +152,7 @@ div.c8_tab_modal_popup_wrap > div.modal_popup > div.contents_inner_button{
 /* Mobile */
 
 div.c8_mo_modal_popup_wrap{
-  display: none;
+  /* display: none; */
 }
 
 div#wrap > div#content{
