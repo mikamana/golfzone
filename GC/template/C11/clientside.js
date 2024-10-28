@@ -4,6 +4,7 @@
     const { userGroup, triggerOptions, triggerOptionsNumber } = context || {};
     return new Promise((resolve, reject) => {
       setTimeout(() => {
+        console.log("C11_TEST_1");
         if (userGroup !== "Control") {
           if (SalesforceInteractions.cashDom("#email").val() === "") return;
           if (SalesforceInteractions.cashDom("#golfzonNo").val() === "") return;
@@ -27,36 +28,53 @@
               fetch(`https://www.golfzoncounty.com/member_api/mingreenfeelist?gc_no=${gcFavNum}&chnl=w`)
                 .then((res) => res.json())
                 .then((data) => {
+                  console.log("C11_TEST_2");
+                  if (Object.keys(data).length !== 0) {
+                    const golfZoneName = data.entitys[0].golfclub_name;
+                    const golfZoneHashTag = data.entitys[0].hash;
+                    const golfZoneUrl = data.entitys[0].reserve_url;
+                    const golfZoneHash = golfZoneHashTag.split(",");
+                    let hashArr = [];
 
+                    golfZoneHash.forEach((node, idx) => {
+                      const hashTag = "#" + node
+                      hashArr.push(hashTag);
 
+                    })
 
-                  const golfZoneName = data.entitys[0].golfclub_name;
-                  const golfZoneHashTag = data.entitys[0].hash;
-                  const golfZoneUrl = data.entitys[0].reserve_url;
-                  const golfZoneHash = golfZoneHashTag.split(",");
-                  let hashArr = [];
+                    const hash = hashArr.join(" ");
+                    SalesforceInteractions.cashDom(".favorites_contents_info_hashtag_wrap").text(hash);
+                    SalesforceInteractions.cashDom(".favorites_contents_info_name").text(golfZoneName);
+                    // SalesforceInteractions.cashDom(".favorites_contents_info_randing")[0].attributes.href.value = golfZoneUrl;
+                    SalesforceInteractions.cashDom(".favorites_contents_info_randing_ttime")[0].attributes.href.value = golfZoneUrl;
+                  } else {
+                    fetch(`https://www.golfzoncounty.com/member_api/mingreenfeelist?gc_no=1&chnl=w`)
+                      .then((res) => res.json())
+                      .then((data) => {
+                        const golfZoneName = data.entitys[0].golfclub_name;
+                        const golfZoneHashTag = data.entitys[0].hash;
+                        const golfZoneUrl = data.entitys[0].reserve_url;
+                        const golfZoneHash = golfZoneHashTag.split(",");
+                        let hashArr = [];
 
-                  golfZoneHash.forEach((node, idx) => {
-                    const hashTag = "#" + node
-                    hashArr.push(hashTag);
+                        golfZoneHash.forEach((node, idx) => {
+                          const hashTag = "#" + node
+                          hashArr.push(hashTag);
 
-                  })
+                        })
 
-                  const hash = hashArr.join(" ");
-                  SalesforceInteractions.cashDom(".favorites_contents_info_hashtag_wrap").text(hash);
-                  SalesforceInteractions.cashDom(".favorites_contents_info_name").text(golfZoneName);
-                  SalesforceInteractions.cashDom(".favorites_contents_info_randing")[0].attributes.href.value = golfZoneUrl;
-                  SalesforceInteractions.cashDom(".favorites_contents_info_randing_ttime")[0].attributes.href.value = golfZoneUrl;
+                        const hash = hashArr.join(" ");
+                        SalesforceInteractions.cashDom(".favorites_contents_info_hashtag_wrap").text(hash);
+                        SalesforceInteractions.cashDom(".favorites_contents_info_name").text(golfZoneName);
+                        // SalesforceInteractions.cashDom(".favorites_contents_info_randing")[0].attributes.href.value = golfZoneUrl;
+                        SalesforceInteractions.cashDom(".favorites_contents_info_randing_ttime")[0].attributes.href.value = golfZoneUrl;
+                      })
+                  }
                 })
             } else {
               fetch(`https://www.golfzoncounty.com/member_api/mingreenfeelist?gc_no=${gcFavNum}&chnl=w`)
                 .then((res) => res.json())
                 .then((data) => {
-
-                  const golfZoneName = data.entitys[0].golfclub_name;
-                  const golfZoneHashTag = data.entitys[0].hash;
-                  const golfZoneUrl = data.entitys[0].reserve_url;
-
                   function replaceWWWwithM(url) {
                     if (url.includes("www.")) {
                       return url.replace("www.", "m.");
@@ -65,24 +83,41 @@
                       return url;
                     }
                   }
-                  const mobileUrl = replaceWWWwithM(golfZoneUrl);
-                  console.log(mobileUrl);
-                  SalesforceInteractions.cashDom(".c11_mo_banner_wrap .favorites_contents_info_randing_ttime")[0].attributes.href.value = mobileUrl;
-
-                  const golfZoneHash = golfZoneHashTag.split(",");
-                  let hashArr = [];
-                  golfZoneHash.forEach((node, idx) => {
-                    const hashTag = "#" + node
-                    hashArr.push(hashTag);
-                  })
-                  const hash = hashArr.join(" ");
-                  SalesforceInteractions.cashDom(".c11_mo_banner_wrap .favorites_contents_info_hashtag_wrap").text(hash);
-                  SalesforceInteractions.cashDom(".c11_mo_banner_wrap .favorites_contents_info_name").text(golfZoneName);
-
-                  console.log(golfZoneUrl);
-
-
-
+                  if (Object.keys(data).length !== 0) {
+                    const golfZoneName = data.entitys[0].golfclub_name;
+                    const golfZoneHashTag = data.entitys[0].hash;
+                    const golfZoneUrl = data.entitys[0].reserve_url;
+                    const mobileUrl = replaceWWWwithM(golfZoneUrl);
+                    SalesforceInteractions.cashDom(".c11_mo_banner_wrap .favorites_contents_info_randing_ttime")[0].attributes.href.value = mobileUrl;
+                    const golfZoneHash = golfZoneHashTag.split(",");
+                    let hashArr = [];
+                    golfZoneHash.forEach((node, idx) => {
+                      const hashTag = "#" + node
+                      hashArr.push(hashTag);
+                    })
+                    const hash = hashArr.join(" ");
+                    SalesforceInteractions.cashDom(".c11_mo_banner_wrap .favorites_contents_info_hashtag_wrap").text(hash);
+                    SalesforceInteractions.cashDom(".c11_mo_banner_wrap .favorites_contents_info_name").text(golfZoneName);
+                  } else {
+                    fetch(`https://www.golfzoncounty.com/member_api/mingreenfeelist?gc_no=1&chnl=w`)
+                      .then((res) => res.json())
+                      .then((data) => {
+                        const golfZoneName = data.entitys[0].golfclub_name;
+                        const golfZoneHashTag = data.entitys[0].hash;
+                        const golfZoneUrl = data.entitys[0].reserve_url;
+                        const mobileUrl = replaceWWWwithM(golfZoneUrl);
+                        SalesforceInteractions.cashDom(".c11_mo_banner_wrap .favorites_contents_info_randing_ttime")[0].attributes.href.value = mobileUrl;
+                        const golfZoneHash = golfZoneHashTag.split(",");
+                        let hashArr = [];
+                        golfZoneHash.forEach((node, idx) => {
+                          const hashTag = "#" + node
+                          hashArr.push(hashTag);
+                        })
+                        const hash = hashArr.join(" ");
+                        SalesforceInteractions.cashDom(".c11_mo_banner_wrap .favorites_contents_info_hashtag_wrap").text(hash);
+                        SalesforceInteractions.cashDom(".c11_mo_banner_wrap .favorites_contents_info_name").text(golfZoneName);
+                      })
+                  }
 
                 })
             }

@@ -1,36 +1,45 @@
 (function () {
 
   function apply(context, template) {
-    console.log("C8번 실행");
+    console.log("C8번 시작");
+    //유저 그룹 확인
     const { userGroup, triggerOptions, triggerOptionsNumber } = context || {};
+    //기기 값에 따른 Handlebar 나누기
     const htmlArr = template(context).split("</br>");
-    const device = window.innerWidth > 1220 ? "PC" : window.innerWidth >= 768 ? "Tablet" : "Mobile";
+    const device = window.innerWidth >= 1280 ? "PC" : window.innerWidth >= 768 ? "Tablet" : "Mobile";
     const deviceIndex = { "PC": 0, "Tablet": 1, "Mobile": 2 }[device];
-
-    function fnInitC8() {
+    //캠페인 초기화
+    function fnInitC8(context, template) {
+      console.log("C8_TEST_1");
+      //이메일주소 여부 확인
       if (SalesforceInteractions.cashDom("#email").val() === "") return;
+      //골프존 회원번호 여부 확인
       if (SalesforceInteractions.cashDom("#golfzonNo").val() === "") return;
+      //우선 순위 캠페인 여부 확인
       if (SalesforceInteractions.cashDom("#evg-new-template-c9").length > 0) return;
+      //중복 노출 여부 확인
       if (SalesforceInteractions.cashDom("#evg-new-template-c8").length > 0) return;
+      //기기 확인 후 
       if (deviceIndex === 0) {
-        if (document.querySelector("#divpop").style.visibility === "visible") return;
+        if (document.querySelector("#divpop") !== null && document.querySelector("#divpop").style.visibility === "visible") {
+          return false
+        } else {
+          return true
+        }
       } else if (deviceIndex === 1 || deviceIndex === 2) {
         if (document.querySelector("#evtPop") !== null) {
-          // setTimeout(()=>{
           if (document.querySelector("#evtPop").style.display === "block") {
+            console.log("C8_TEST_1_2");
             return false;
           } else {
             return true;
           }
-          // },50);
         }
       }
-      return true;
     }
 
     function fnInsertC8(context, template) {
-
-      if (deviceIndex === 0) {
+      if (deviceIndex === 0 && navigator.userAgent.indexOf("iPad") <= -1) {
         SalesforceInteractions.cashDom("body").append(htmlArr[deviceIndex]);
       } else {
         SalesforceInteractions.cashDom("#wrap #content").append(htmlArr[deviceIndex]);
@@ -44,7 +53,8 @@
 
     }
 
-    function fnRemoveC8() {
+    function fnRemoveC8(context, template) {
+      console.log("C8_TEST_3");
       const wrap = SalesforceInteractions.cashDom("#evg-new-template-c8");
       const btn = document.querySelectorAll(".contents_inner_button_left_btn, .contents_inner_button_right_btn");
       btn.forEach((node, idx) => {
@@ -63,47 +73,76 @@
     }
 
     function fnStartC8(context, template) {
-      fnInitC8();
-      if (fnInitC8() === undefined || fnInitC8() === false) return;
+      const initResult = fnInitC8(context, template); // 결과를 변수에 저장
+      if (initResult === undefined || initResult === false) return; // 저장한 결과로 조건 검사
       fnInsertC8(context, template);
-      fnRemoveC8();
+      fnRemoveC8(context, template);
     }
-
-
-
-
     return new Promise((resolve, reject) => {
-      console.log("test0");
-      window.addEventListener("load", (e) => {
-        setTimeout(() => {
-          if (userGroup !== "Control") {
-            fnStartC8();
+      const mobileType = navigator.userAgent.toLowerCase();
 
-            if (deviceIndex === 0) {
+      if (mobileType.indexOf('iphone') > -1 || mobileType.indexOf('iPad') > -1) {
+        setTimeout(() => {
+          console.log("아이폰, 아이패드 접속");
+          if (userGroup !== "Control") {
+            fnStartC8(context.template);
+
+            if (window.innerWidth > 1080) {
               document.querySelector("a.close_btn").addEventListener("click", (e) => {
                 setTimeout(() => {
-                  fnStartC8();
+                  fnStartC8(context.template);
                 }, 1000);
               })
 
-            } else if (deviceIndex === 1 || deviceIndex === 2) {
+            } else {
               document.querySelector("button.close").addEventListener("click", (e) => {
                 setTimeout(() => {
-                  fnStartC8();
+                  fnStartC8(context.template);
                 }, 1000);
               })
               document.querySelector("button.today").addEventListener("click", (e) => {
                 setTimeout(() => {
-                  fnStartC8();
+                  fnStartC8(context.template);
                 }, 1500);
               })
 
             }
           }
-        }, 700)
+          // resolve(true);
+        }, 1000);
+      }
+      window.addEventListener("load", (e) => {
+        setTimeout(() => {
+          if (userGroup !== "Control") {
+            fnStartC8(context.template);
+
+            if (window.innerWidth > 1080) {
+              document.querySelector("a.close_btn").addEventListener("click", (e) => {
+                setTimeout(() => {
+                  console.log("C8_TEST_닫기클릭");
+                  fnStartC8(context.template);
+                }, 1000);
+              })
+
+            } else {
+              document.querySelector("button.close").addEventListener("click", (e) => {
+                setTimeout(() => {
+                  console.log("C8_TEST_닫기클릭");
+                  fnStartC8(context.template);
+                }, 1000);
+              })
+              document.querySelector("button.today").addEventListener("click", (e) => {
+                console.log("C8_TEST_오늘하루클릭");
+                setTimeout(() => {
+                  fnStartC8(context.template);
+                }, 1000);
+              })
+
+            }
+          }
+        }, 200);
+        resolve(true);
       })
-      console.log("test1");
-      resolve(true);
     });
 
   }

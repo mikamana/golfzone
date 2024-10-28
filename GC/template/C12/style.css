@@ -56,10 +56,14 @@ div.mo_push_popup{
   box-sizing: border-box;
 }
 
+/* div.mo_push_popup > div.push_image_wrap > img{
+
+} */
+
 div.mo_push_popup > a.push_popup{
   width:100%;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   background-color: #fff;
   border-radius: 5px;
@@ -73,14 +77,15 @@ div.mo_push_popup > a.push_popup{
 div.mo_push_popup > a.push_popup > div.push_text{
 display: flex;
 flex-direction: column;
-gap: 10px;
-font-size: 14px;
+gap: 7px;
+font-size: 13px;
+flex-grow:1;
+
 }
 
 div.mo_push_popup > a.push_popup > div.push_image_wrap > img.push_image{
   width:35px;
   padding-left: 20px;
-
 }
 
 @keyframes mo_slidein {

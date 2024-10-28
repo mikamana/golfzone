@@ -4,22 +4,22 @@ export class NewTemplate implements CampaignTemplateComponent {
   area: string;
 
   @title("타이틀 - 위")
-  titleTop: string;
+  titleTop: string = "신규 가입 시";
 
   @title("타이틀 - 아래")
-  titleBottom: string;
+  titleBottom: string = "1만원 즉시 할인";
 
   @title("서브타이틀")
-  subTitle: string;
+  subTitle: string = "자세히보기";
 
   @title("이미지 URL")
   imageUrl: string = "https://image.mkt.golfzoncounty.com/lib/fe3211747364047a741773/m/1/28c527a0-332b-47c0-a5b2-f43a7426bedf.png";
 
   @title("랜딩URL_PC")
-  randingUrlPC: string = "https://image.mkt.golfzoncounty.com/lib/fe3211747364047a741773/m/1/a46ad3e2-06d7-4dce-b136-10c84ca7aac8.png";
+  randingUrlPC: string = "https://www.golfzoncounty.com/myround/coupon";
 
   @title("랜딩URL_MO")
-  randingUrlMO: string = "https://image.mkt.golfzoncounty.com/lib/fe3211747364047a741773/m/1/a46ad3e2-06d7-4dce-b136-10c84ca7aac8.png";
+  randingUrlMO: string = "https://m.golfzoncounty.com/myround/coupon";
 
 
 
