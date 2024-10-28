@@ -1,5 +1,5 @@
 // 테스트 시간
-console.log("테스트 시간 24-10-17-09:30");
+console.log("테스트 시간 24-10-28 15:20");
 
 //접속 국가
 const getLocale = () => {
@@ -71,22 +71,31 @@ if (allowedDomains.includes(domain)) {
 
     }, 1000);
 
+    //  예약 정보 가져오기
+    const getReserveInfo = () => {
+      // const SalesforceInteractions.cashDom("")
+    }
+
     const sitemapConfig = {
       global: {
-        locale: getLocale(),
+        // locale: getLocale(), //지역 정보 수집 X
         onActionEvent: (actionEvent) => {
           actionEvent.user = actionEvent.user || {};
           actionEvent.user.identities = actionEvent.user.identities || {};
           actionEvent.user.attributes = actionEvent.user.attributes || {};
           actionEvent.user.identities.emailAddress = sessionStorage.getItem("email");
           actionEvent.user.attributes.referrerUrl = referrer;
-          actionEvent.user.attributes.userName = sessionStorage.getItem("userName");
+          //회원명 DC에서 제공받는 정보 사용
+          //   actionEvent.user.attributes.userName = sessionStorage.getItem("userName");
           // 로그인 여부
           if (sessionStorage.getItem("log") !== null) {
             actionEvent.user.attributes.loginBool = sessionStorage.getItem("log")
           }
           if (sessionStorage.getItem("recentGcNum") !== null) {
             actionEvent.user.attributes.recentGcNum = sessionStorage.getItem("recentGcNum");
+          }
+          if (sessionStorage.getItem("recentGcDate") !== null) {
+            actionEvent.user.attributes.recentGcDate = sessionStorage.getItem("recentGcDate");
           }
           return actionEvent;
         },
@@ -170,14 +179,12 @@ if (allowedDomains.includes(domain)) {
                 },
               })
             }),
-            SalesforceInteractions.listener("click", ".dropBox-orange", (ele) => {
-
-              const ulElement = ele.target.closest('[data-gc_no]');
-              const gcNoValue = ulElement.getAttribute('data-gc_no');
-
-
+            SalesforceInteractions.listener("click", ".dropBox-orange ul li", (ele) => {
+              const targetEl = ele.target;
+              const listItem = SalesforceInteractions.cashDom(targetEl).closest("li");
+              const listItems = SalesforceInteractions.cashDom(listItem).parent();
+              const gcNoValue = SalesforceInteractions.cashDom(listItems).attr("data-gc_no");
               sessionStorage.setItem("recentGcNum", gcNoValue);
-
               SalesforceInteractions.sendEvent({
                 interaction: {
                   name: `recentGcNum`,
@@ -189,6 +196,22 @@ if (allowedDomains.includes(domain)) {
                 },
               })
             }),
+            SalesforceInteractions.listener("click", ".calendar_type3 ul li", (ele) => {
+              const targetEl = ele.target;
+              const listItem = SalesforceInteractions.cashDom(targetEl).closest("input");
+              const gcDateValue = SalesforceInteractions.cashDom(listItem).attr("data-date");
+              sessionStorage.setItem("recentGcDate", gcDateValue);
+              SalesforceInteractions.sendEvent({
+                interaction: {
+                  name: `recentGcDate`,
+                },
+                user: {
+                  attributes: {
+                    recentGcDate: sessionStorage.getItem("recentGcDate"),
+                  },
+                },
+              })
+            })
           ],
           contentZones: [
             {
@@ -1156,6 +1179,29 @@ if (allowedDomains.includes(domain)) {
                 },
               })
             }),
+            SalesforceInteractions.listener("click", "#timeList_reserve dd .ga4_event_reserve", (ele) => {
+              const targetEl = ele.target;
+              const gcNoValue = SalesforceInteractions.cashDom(targetEl).closest("dl").attr("data-gc_no");
+              sessionStorage.setItem("recentGcNum", gcNoValue);
+
+              SalesforceInteractions.sendEvent({
+                interaction: {
+                  name: `recentGcNum`,
+                },
+                user: {
+                  attributes: {
+                    recentGcNum: sessionStorage.getItem("recentGcNum"),
+                  },
+                },
+              })
+            }),
+            SalesforceInteractions.listener("click", "table.data-table", (ele) => {
+
+              const targetEl = ele.target;
+              const gcDateValue = SalesforceInteractions.cashDom(targetEl).closest("a").attr("data-date");
+              sessionStorage.setItem("recentGcDate", gcDateValue);
+
+            })
           ],
           contentZones: [
             {
