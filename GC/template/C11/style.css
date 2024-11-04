@@ -70,6 +70,8 @@ div.c11_banner_wrap > div.favorites_contents_box > div.favorites_contents_info_b
 
 div.c11_banner_wrap > div.favorites_contents_box > .favorites_contents_info_randing_ttime{
   font-size: 16px;
+  text-decoration: underline;
+  font-weight: bold;
 }
 
 /* Mobile */
@@ -107,6 +109,9 @@ div.c11_mo_banner_wrap > div.favorites_contents_box_wrap > div.favorites_content
 
 div.c11_mo_banner_wrap > div.favorites_contents_box_wrap > div.favorites_contents_box > a{
   color:#FFF;
+  font-size: 14px;
+  text-decoration: underline;
+  font-weight: bold;
 }
 
 div.c11_mo_banner_wrap > div.favorites_contents_box_wrap > div.favorites_contents_box > div.favorites_contents_info_box{
@@ -124,6 +129,6 @@ div.c11_mo_banner_wrap > div.favorites_contents_box_wrap > div.favorites_content
   font-size: 14px;
 }
 
-div.c11_mo_banner_wrap > div.favorites_contents_box > .favorites_contents_info_randing_ttime{
-  font-size: 13px;
+div.c11_mo_banner_wrap > div.favorites_contents_box a.favorites_contents_info_randing_ttime{
+  
 }

@@ -3,7 +3,16 @@ div.contents_inner_button_right_btn, div.contents_inner_button_left_btn{
   cursor: pointer;
 }
 
+body{
+  /* height:100vh;
+  position: fixed;
+  left: 0px;
+  bottom: 30px; */
+}
+
 /* PC */
+
+
 
 div.c8_modal_popup_wrap{
   /* display: none; */

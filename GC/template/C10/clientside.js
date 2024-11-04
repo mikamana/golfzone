@@ -2,56 +2,45 @@
 
   function apply(context, template) {
     console.log("C10번 시작");
-    const { userGroup, triggerOptions, triggerOptionsNumber } = context || {};
-    let statusTemplateCheckC10 = 0;
-    let statusPcPopCheckC10 = 0;
-    let statusMoPopCheckC10 = 0;
+    let statusTemplateCheckC10, statusPcPopCheckC10, statusMoPopCheckC10;
 
     function fnInitC10(context, template) {
       console.log("C10_TEST_1");
-      if (SalesforceInteractions.cashDom("#email").val() === "") return;
+      // if(SalesforceInteractions.cashDom("#email").val() === "") return;
       if (SalesforceInteractions.cashDom("#golfzonNo").val() === "") return;
       if (SalesforceInteractions.cashDom('#evg-new-template-c10').length > 0) return;
       if (SalesforceInteractions.cashDom('#evg-new-template-c12').length > 0) return;
-      if (context.attributes.attributes.couponLength === undefined || context.attributes.attributes.couponLength === null) return;
-      if (context.attributes.attributes.couponLength.value === "") return;
+
+      if (context.attributes.attributes.couponLength === undefined || context.attributes.attributes.couponLength === null || context.attributes.attributes.couponLength.value === "N" || context.attributes.attributes.couponLength.value === null) return;
+      if (context.attributes.attributes.couponName === undefined || context.attributes.attributes.couponName === null || context.attributes.attributes.couponName.value === "N" || context.attributes.attributes.couponName.value === null) return;
       /* 템플릿 체크 */
       if (SalesforceInteractions.cashDom("#evg-new-template-c8").length > 0) {
         return false;
       } else {
         statusTemplateCheckC10 = 1;
       }
-      if (window.innerWidth > 1080) {
-        /* PC 팝업창 체크 */
-        if (document.querySelector("#divpop") !== null) {
-          if (document.querySelector("#divpop").style.visibility === "visible") {
-            return false;
-          } else if (document.querySelector("#divpop").style.visibility === "hidden") {
-            statusPcPopCheckC10 = 1;
-          } else {
-            statusPcPopCheckC10 = 1;
-          }
+      const isPc = window.innerWidth > 1080;
+      const popSelector = isPc ? "#divpop" : "#evtPop";
+      const popNode = document.querySelector(popSelector);
+      const isVisible = isPc ? "visible" : "block";
 
-        } else if (document.querySelector("#divpop") === null) {
+      if (popNode) {
+        if (popNode.style.visibility === isVisible || popNode.style.display === isVisible) {
+          return false
+        } else {
+          statusMoPopCheckC10 = 1;
           statusPcPopCheckC10 = 1;
         }
-
-        return { statusTemplateCheckC10, statusPcPopCheckC10 }
       } else {
-        /* MO 팝업창 체크 */
-        if (document.querySelector("#evtPop") !== null) {
-          if (document.querySelector("#evtPop").style.display === "block") {
-            return false;
-          } else if (document.querySelector("#evtPop").style.display === "none") {
-            statusMoPopCheckC10 = 1;
-          } else {
-            statusMoPopCheckC10 = 1;
-          }
-        } else if (document.querySelector("#evtPop") === null) {
-          statusMoPopCheckC10 = 1;
-        }
-        return { statusTemplateCheckC10, statusMoPopCheckC10 };
+        statusMoPopCheckC10 = 1;
+        statusPcPopCheckC10 = 1;
       }
+
+      // 오늘 하루 보지 않기 확인
+      const clickDate = fnGetCookie("connectNowC10");
+      // if (clickDate !== undefined) return;
+
+      return { statusTemplateCheckC10, statusPcPopCheckC10, statusMoPopCheckC10 }
     }
 
     function fnInsertC10(context, template) {
@@ -61,21 +50,43 @@
       const deviceIndex = { "PC": 0, "mobile": 1 }[device];
       SalesforceInteractions.cashDom("body").prepend(htmlArr[deviceIndex]);
 
-      SalesforceInteractions.sendEvent({
-        interaction: {
-          name: "[시나리오] C10 - 쿠폰 보유 대상 보유한 쿠폰 안내 실행"
-        }
-      })
+      SalesforceInteractions.mcis.sendStat({
+        campaignStats: [{
+          control: false,
+          experienceId: context.experience,
+          stat: "Impression"
+        }]
+      });
+    }
+
+    function fnNowDateC10() {
+
+      // 들어온 날짜 구하기
+      const now = new Date();
+      // 다음 날 00시 구하기
+      const nextDay = new Date(now);
+      nextDay.setHours(24, 0, 0, 0); // 다음 날 00:00으로 설정
+      // 접속한 시간 저장
+      document.cookie = `connectNowC10=${now}; expires=${nextDay}`;
+
+    }
+
+    // 쿠키 가져오기
+    function fnGetCookie(name) {
+      let matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+      ));
+      return matches ? decodeURIComponent(matches[1]) : undefined;
     }
 
     function fnPopHideC10() {
       if (window.innerWidth > 1080) {
         setTimeout(() => {
-          SalesforceInteractions.cashDom("#evg-new-template-c10.pc_push_popup").hide();
+          SalesforceInteractions.cashDom("#evg-new-template-c10.pc_push_popup_c10").hide();
         }, 7000)
       } else {
         setTimeout(() => {
-          SalesforceInteractions.cashDom("#evg-new-template-c10.mo_push_popup").hide();
+          SalesforceInteractions.cashDom("#evg-new-template-c10.mo_push_popup_c10").hide();
         }, 7000)
       }
     }
@@ -89,218 +100,96 @@
         SalesforceInteractions.cashDom(".push_text").text(c10CouponName + "쿠폰이 있으니 사용하세요.");
       } else {
         SalesforceInteractions.cashDom(".coupon_name").text(c10CouponName);
-        SalesforceInteractions.cashDom(".coupon_length").text(c10CouponLength);
+        SalesforceInteractions.cashDom(".coupon_length").text(c10CouponLength - 1);
       }
 
     }
 
     function fnStartC10(context, template) {
       const initC10Result = fnInitC10(context, template); // 결과를 변수에 저장
-      // fnInitC10(context, template);
       if (initC10Result === undefined || initC10Result === false) return;
-      // const result = fnInitC10(context, template);
       if (initC10Result.statusTemplateCheckC10 !== 1 && initC10Result.statusMoPopCheckC10 !== 1) return;
       if (initC10Result.statusTemplateCheckC10 !== 1 && initC10Result.statusPcPopCheckC10 !== 1) return;
+
       fnInsertC10(context, template);
       fnApiInnerC10();
       fnPopHideC10();
+      fnNowDateC10();
+
     }
 
     return new Promise((resolve, reject) => {
 
-      /* 아이폰 작동 */
-      const mobileType = navigator.userAgent.toLowerCase();
-      if (mobileType.indexOf('iphone') > -1 || mobileType.indexOf('ipad') > -1) {
+      const isIphone = /iphone|ipad/i.test(navigator.userAgent);
+      const { userGroup, triggerOptions, triggerOptionsNumber } = context || {};
+
+      const setupObserver = () => {
         const targetNode = document.querySelector('body');
         const config = { childList: true, subtree: true };
-        const observer = new MutationObserver((mutationsList, observer) => {
-          // 감지된 모든 변화를 순회하며 처리
-          for (let mutation of mutationsList) {
-            if (mutation.type === 'childList') {
-              if (mutation.addedNodes.length > 0) {
-                mutation.addedNodes.forEach(node => {
-                  // 여기서 추가된 자식 요소를 사용할 수 있음
-                  // 예: 추가된 노드의 텍스트를 변경하거나 속성을 조작할 수 있음
-                  if (node.id === 'evg-new-template-c9') { // 특정 id 값을 가진 노드인지 확인
-                    node.querySelector(".contents_inner_info_image_button").addEventListener("click", (e) => {
-                      setTimeout(() => {
-                        fnStartC10(context, template);
-                      }, 1220);
-                    })
-                    node.querySelector(".contents_inner_info_title_today_btn").addEventListener("click", (e) => {
-                      setTimeout(() => {
-                        fnStartC10(context, template);
-                      }, 1220);
-                    })
-                  } else if (node.id === 'evg-new-template-c8') {
-                    node.querySelector(".contents_inner_button_right_btn").addEventListener("click", (e) => {
-                      setTimeout(() => {
-                        fnStartC10(context, template);
-                      }, 500);
-                    });
-                    node.querySelector(".contents_inner_button_left_btn").addEventListener("click", (e) => {
-                      setTimeout(() => {
-                        fnStartC10(context, template);
-                      }, 500);
-                    });
-                  }
+        const observer = new MutationObserver((mutationsList) => {
+          mutationsList.forEach(mutation => {
+            mutation.addedNodes.forEach(node => {
+              if (node.id === 'evg-new-template-c9') {
+                addClickListener(node, ".contents_inner_info_image_button", 1220);
+                addClickListener(node, ".contents_inner_info_title_today_btn", 1220);
+              } else if (node.id === 'evg-new-template-c8') {
+                addClickListener(node, ".contents_inner_button_right_btn", 500);
+                addClickListener(node, ".contents_inner_button_left_btn", 500);
+              }
+            });
+          });
+        });
+        observer.observe(targetNode, config);
+      };
 
+      const addClickListener = (parentNode, selector, delay) => {
+        const element = parentNode.querySelector(selector);
+        if (element) {
+          element.addEventListener("click", () => {
+            setTimeout(() => fnStartC10(context, template), delay);
+          });
+        }
+      };
+
+      const initializeEventListeners = () => {
+        if (userGroup !== "Control") {
+          // 기본 시작 함수 호출
+          fnStartC10(context, template);
+
+          // 셀렉터와 지연 시간 매핑 배열 정의
+          const eventMappings = [
+            ["#evg-new-template-c9 .contents_inner_info_image_button", 1010],
+            ["#evg-new-template-c9 .contents_inner_info_title_today_btn", 1010],
+            [".leftB .close_btn", 1010],
+            ["#evtPop .btn1 button, #evtPop .btn2 button", 1010],
+            [".contents_inner_button_right_btn, .contents_inner_button_left_btn", 1010]
+          ];
+
+          // 각 셀렉터에 이벤트 리스너 설정
+          eventMappings.forEach(([selector, delay]) => {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach((btn) => {
+              if (btn) {
+                btn.addEventListener("click", () => {
+                  setTimeout(() => fnStartC10(context, template), delay);
                 });
               }
-            }
-          }
-        });
+            });
+          });
+        }
+      };
 
-        // MutationObserver 생성 및 설정
-        observer.observe(targetNode, config);
-
-        setTimeout(() => {
-          if (userGroup !== "Control") {
-            fnStartC10(context, template);
-
-            if (SalesforceInteractions.cashDom("#evg-new-template-c9")[0] !== null) {
-              const popBtn = SalesforceInteractions.cashDom(".contents_inner_info_image_button");
-              SalesforceInteractions.listener("click", ".contents_inner_info_image_button", (e) => {
-                setTimeout(() => {
-                  fnStart(context, template);
-                }, 1010);
-              })
-
-              SalesforceInteractions.listener("click", ".contents_inner_info_title_today_btn", (e) => {
-                setTimeout(() => {
-                  fnStart(context, template);
-                }, 1010);
-              })
-            }
-
-            if (document.querySelector(".leftB .close_btn") !== null) {
-              const popBtn = document.querySelector("#divpop .leftB .close_btn");
-              popBtn.addEventListener("click", (e) => {
-                setTimeout(() => {
-                  fnStartC10(context, template);
-                }, 1010);
-              })
-            }
-            if (document.querySelector("#evtPop .btn2 button") !== null) {
-              const popBtn = document.querySelectorAll("#evtPop .btn1 button, #evtPop .btn2 button");
-              popBtn.forEach((btn, idx) => {
-                btn.addEventListener("click", (e) => {
-                  setTimeout(() => {
-                    fnStartC10(context, template);
-                  }, 1010);
-                })
-              })
-            }
-            if (document.querySelector(".contents_inner_button_right_btn") !== null) {
-              const closeBtnC10 = document.querySelectorAll(".contents_inner_button_right_btn, .contents_inner_button_left_btn");
-              closeBtnC10.forEach((btn, idx) => {
-                btn.addEventListener("click", (e) => {
-                  setTimeout(() => {
-                    fnStartC10(context, template);
-                  }, 1010)
-                });
-              })
-            }
-          }
-          resolve(true);
-        }, 1000);
+      if (isIphone) {
+        setupObserver();
+        setTimeout(initializeEventListeners, 1000);
       }
 
-      window.addEventListener("load", (e) => {
-        const targetNode = document.querySelector('body');
-        const config = { childList: true, subtree: true };
-        const observer = new MutationObserver((mutationsList, observer) => {
-          // 감지된 모든 변화를 순회하며 처리
-          for (let mutation of mutationsList) {
-            if (mutation.type === 'childList') {
-              if (mutation.addedNodes.length > 0) {
-                mutation.addedNodes.forEach(node => {
-                  // 여기서 추가된 자식 요소를 사용할 수 있음
-                  // 예: 추가된 노드의 텍스트를 변경하거나 속성을 조작할 수 있음
-                  if (node.id === 'evg-new-template-c9') { // 특정 id 값을 가진 노드인지 확인
-                    node.querySelector(".contents_inner_info_image_button").addEventListener("click", (e) => {
-                      setTimeout(() => {
-                        fnStartC10(context, template);
-                      }, 100);
-                    })
-                    node.querySelector(".contents_inner_info_title_today_btn").addEventListener("click", (e) => {
-                      setTimeout(() => {
-                        fnStartC10(context, template);
-                      }, 100);
-                    })
-                  } else if (node.id === 'evg-new-template-c8') {
-                    node.querySelector(".contents_inner_button_right_btn").addEventListener("click", (e) => {
-                      setTimeout(() => {
-                        fnStartC10(context, template);
-                      }, 100);
-                    });
-                    node.querySelector(".contents_inner_button_left_btn").addEventListener("click", (e) => {
-                      setTimeout(() => {
-                        fnStartC10(context, template);
-                      }, 100);
-                    });
-                  }
-
-                });
-              }
-            }
-          }
-        });
-
-        // MutationObserver 생성 및 설정
-        observer.observe(targetNode, config);
-
-        setTimeout(() => {
-          if (userGroup !== "Control") {
-            fnStartC10(context, template);
-
-            if (SalesforceInteractions.cashDom("#evg-new-template-c9")[0] !== null) {
-              const popBtn = SalesforceInteractions.cashDom(".contents_inner_info_image_button");
-              SalesforceInteractions.listener("click", ".contents_inner_info_image_button", (e) => {
-                setTimeout(() => {
-                  fnStart(context, template);
-                }, 1010);
-              })
-
-              SalesforceInteractions.listener("click", ".contents_inner_info_title_today_btn", (e) => {
-                setTimeout(() => {
-                  fnStart(context, template);
-                }, 1010);
-              })
-            }
-
-            if (document.querySelector(".leftB .close_btn") !== null) {
-              const popBtn = document.querySelector("#divpop .leftB .close_btn");
-              popBtn.addEventListener("click", (e) => {
-                setTimeout(() => {
-                  fnStartC10(context, template);
-                }, 1010);
-              })
-            }
-            if (document.querySelector("#evtPop .btn2 button") !== null) {
-              const popBtn = document.querySelectorAll("#evtPop .btn1 button, #evtPop .btn2 button");
-              popBtn.forEach((btn, idx) => {
-                btn.addEventListener("click", (e) => {
-                  setTimeout(() => {
-                    fnStartC10(context, template);
-                  }, 1010);
-                })
-              })
-            }
-            if (document.querySelector(".contents_inner_button_right_btn") !== null) {
-              const closeBtnC10 = document.querySelectorAll(".contents_inner_button_right_btn, .contents_inner_button_left_btn");
-              closeBtnC10.forEach((btn, idx) => {
-                btn.addEventListener("click", (e) => {
-                  setTimeout(() => {
-                    fnStartC10(context, template);
-                  }, 1010)
-                });
-              })
-            }
-          }
-          resolve(true);
-        }, 550);
+      window.addEventListener("load", () => {
+        setupObserver();
+        setTimeout(initializeEventListeners, 550);
       });
+
+
     });
 
   }
