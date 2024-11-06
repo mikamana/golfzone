@@ -6,11 +6,18 @@
     function fnInit(context, template) {
       console.log("C12_TEST_1");
       console.log(context.attributes.attributes.memberName.value);
+      console.log(context.attributes.attributes.recentGcNum.value);
+      // 로그인 여부
+      if (sessionStorage.getItem("log") !== "true") return;
       // if (SalesforceInteractions.cashDom("#email").val() === "") return;
       if (SalesforceInteractions.cashDom("#golfzonNo").val() === "") return;
+      console.log("C12_TEST_1_1");
       if (context.attributes.attributes.recentGcNum === undefined || context.attributes.attributes.recentGcNum === null || context.attributes.attributes.recentGcNum.value === "N") return;
+      console.log("C12_TEST_1_2");
       if (context.attributes.attributes.memberName === undefined || context.attributes.attributes.memberName === null || context.attributes.attributes.memberName.value === "N") return;
-      // if (context.attributes.attributes.recentGcDate === undefined || context.attributes.attributes.recentGcDate === null || context.attributes.attributes.recentGcDate.value === "N") return;
+      console.log("C12_TEST_1_3");
+      if (context.attributes.attributes.recentGcDate === undefined || context.attributes.attributes.recentGcDate === null || context.attributes.attributes.recentGcDate.value === "N") return;
+      console.log("C12_TEST_2");
       /* 템플릿 체크 */
       if (SalesforceInteractions.cashDom("#evg-new-template-c8").length > 0) return;
       if (SalesforceInteractions.cashDom("#evg-new-template-c9").length > 0 &&
@@ -19,7 +26,11 @@
       } else {
         statusTemplateCheck = 1;
       }
+      console.log("C12_TEST_3");
       if (SalesforceInteractions.cashDom("#evg-new-template-c12").length > 0) return;
+      if (window.location.href.includes("https://www.golfzoncounty.com/reserve/reserveConfirm") || window.location.href.includes("https://www.golfzoncounty.com/reserve/reserveComplete")
+        || window.location.href.includes("https://m.golfzoncounty.com/reserve/reserveConfirm") || window.location.href.includes("https://m.golfzoncounty.com/reserve/reserveComplete")
+      ) return;
 
       const isPc = window.innerWidth > 1080;
       const popSelector = isPc ? ".evtPop" : "#evtPop";
@@ -37,11 +48,15 @@
         statusMoPopCheck = 1;
         statusPcPopCheck = 1;
       }
+      console.log("C12_TEST_4");
 
-      // 오늘 하루 보지 않기 확인
-      const clickDate = fnGetCookie("connectNowC12");
+      // 피로도 확인 - 쿠키
+      // const clickDate = fnGetCookie("connectNowC12");
       // if (clickDate !== undefined) return;
-
+      // 피로도 확인 - 로컬 스토리지
+      let currentDate = new Date();
+      if (currentDate < new Date(localStorage.getItem("c12DayEnd"))) return;
+      console.log("C12_TEST_5");
       return { statusTemplateCheck, statusPcPopCheck, statusMoPopCheck }
 
     }
@@ -60,7 +75,21 @@
       });
     }
 
+    function fnClickLandingC12() {
+
+      document.querySelector("#evg-new-template-c12 a.push_popup").addEventListener("click", (e) => {
+        sessionStorage.setItem("c12_landing", true);
+
+      })
+
+    }
+
     function fnNowDateC12() {
+
+      //피로도 설정
+      let saveDate = new Date();
+      let endDate = new Date(saveDate.getFullYear(), saveDate.getMonth(), saveDate.getDate(), 23, 59, 59);
+      localStorage.setItem("c12DayEnd", endDate);
 
       // 들어온 날짜 구하기
       const now = new Date();
@@ -94,6 +123,11 @@
 
     function fnApiInsert(context, template) {
 
+      const today = new Date();
+      const formattedDate = today.getFullYear().toString() +
+        String(today.getMonth() + 1).padStart(2, '0') +
+        String(today.getDate()).padStart(2, '0');
+
       const c12GcDate = context.attributes.attributes.recentGcDate.value;
       const c12GcNum = context.attributes.attributes.recentGcNum.value;
 
@@ -126,21 +160,7 @@
         });
     }
 
-
-
     function fnStart(context, template) {
-      const today = new Date();
-      const formattedDate = today.getFullYear().toString() +
-        String(today.getMonth() + 1).padStart(2, '0') +
-        String(today.getDate()).padStart(2, '0');
-
-      SalesforceInteractions.sendEvent({
-        user: {
-          attributes: {
-            recentGcDate: formattedDate
-          }
-        }
-      });
       const result = fnInit(context, template);
       if (result === undefined || result === false) return;
       if (result.statusTemplateCheck !== 1 && result.statusPcPopCheck !== 1) return;
@@ -149,6 +169,7 @@
       fnPopHide();
       fnApiInsert(context, template);
       fnNowDateC12();
+      fnClickLandingC12();
     }
 
     return new Promise((resolve) => {
@@ -158,47 +179,55 @@
       const targetNode = document.querySelector('body');
       const config = { childList: true, subtree: true };
 
-      const addClickListener = (selector, delay = 1005) => {
-        const elements = document.querySelectorAll(selector);
-        elements.forEach((element) =>
-          element.addEventListener("click", () => setTimeout(() => fnStart(context, template), delay))
-        );
-      };
+      /* const addClickListener = (selector, delay = 1005) => {
+          const elements = document.querySelectorAll(selector);
+          elements.forEach((element) =>
+              element.addEventListener("click", () => setTimeout(() => fnStart(context, template), delay))
+          );
+      }; */
 
-      const observer = new MutationObserver((mutationsList) => {
-        mutationsList.forEach((mutation) => {
-          if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-            mutation.addedNodes.forEach((node) => {
-              if (node.id === 'evg-new-template-c9') {
-                addClickListener("#evg-new-template-c9 .contents_inner_info_image_button", 200);
-                addClickListener("#evg-new-template-c9 .contents_inner_info_title_today_btn", 200);
-              } else if (node.id === 'evg-new-template-c8') {
-                addClickListener(".contents_inner_button_right_btn", 200);
-                addClickListener(".contents_inner_button_left_btn", 200);
-              }
-            });
-          }
-        });
-      });
+      // const setObserver = () => {
+      //     const observer = new MutationObserver((mutationsList) => {
+      //         mutationsList.forEach((mutation) => {
+      //             if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+      //                 mutation.addedNodes.forEach((node) => {
+      //                     if (node.id === 'evg-new-template-c9') {
+      //                         addClickListener("#evg-new-template-c9 .contents_inner_info_image_button", 200);
+      //                         addClickListener("#evg-new-template-c9 .contents_inner_info_title_today_btn", 200);
+      //                     } else if (node.id === 'evg-new-template-c8') {
+      //                         addClickListener(".contents_inner_button_right_btn", 200);
+      //                         addClickListener(".contents_inner_button_left_btn", 200);
+      //                     }
+      //                 });
+      //             }
+      //         });
+      //     });
 
-      observer.observe(targetNode, config);
+      //     observer.observe(targetNode, config);
+      // }
+
+
 
       const initialize = () => {
         if (userGroup !== "Control") {
           fnStart(context, template);
-          addClickListener(".contents_inner_info_image_button");
+          /* addClickListener(".contents_inner_info_image_button");
           addClickListener(".contents_inner_info_title_today_btn");
           addClickListener(".leftB .close_btn");
           addClickListener("#evtPop .btn1 button, #evtPop .btn2 button");
-          addClickListener(".contents_inner_button_right_btn, .contents_inner_button_left_btn");
+          addClickListener(".contents_inner_button_right_btn, .contents_inner_button_left_btn"); */
         }
-        resolve(true);
+        // resolve(true);
       };
 
       if (isIphone) {
         setTimeout(initialize, 500);
+        // setObserver();
       } else {
-        window.addEventListener("load", () => setTimeout(initialize, 500));
+        window.addEventListener("load", () => {
+          setTimeout(initialize, 500)
+          // setObserver();
+        });
       }
     });
   }

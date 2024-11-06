@@ -1,14 +1,5 @@
 // 테스트 시간
-console.log("테스트 시간 24-11-04 09:09");
-
-//접속 국가
-const getLocale = () => {
-  const localeOrigin = navigator.language;
-  const localeConvert = localeOrigin.replace("-", "_");
-  if (localeConvert.length === 5) {
-    return localeConvert;
-  }
-};
+console.log("테스트 시간 24-11-05 10:35");
 
 // refferer
 const referrer = document.referrer;
@@ -22,8 +13,55 @@ const getGolfId = () => {
 
 }
 
+//식별 정보 값 가져오기
+const getLoginInfo = setTimeout(() => {
+  const email = document.querySelector("input#email")
+  const memNum = document.querySelector("input#golfzonNo")
+  //식별 코드 존재 확인
+  if (email !== null && memNum !== null) {
+    const fakeEmail = `${memNum.value}@golfzon_f.com`
+    //이메일 값이 존재할 때
+    if (email.value !== "") {
+      //세션에 미리 저장된 email이 없을 때
+      if (sessionStorage.getItem("email") === null) {
+        sessionStorage.setItem("email", email.value);
+        console.log("test1");
+        sessionStorage.setItem("log", true)
+      } else {
+        //세션에 미리 저장된 email 값이 존재할 경우, 저장된 email과 현재 로그인 이메일 일치 여부 확인
+        if (sessionStorage.getItem("email") !== null && email.value !== sessionStorage.getItem("email")) {
+          sessionStorage.setItem("email", email.value);
+          console.log("test2");
+          sessionStorage.setItem("log", true)
+        }
+      }
+    } else {
+      //회원번호 값 존재 여부 확인
+      if (memNum.value !== "") {
+        //세션에 저장된 이메일 값 확인
+        if (sessionStorage.getItem("email") === null) {
+          sessionStorage.setItem("email", fakeEmail)
+        } else {
+          //세션에 저장되 이메일 값이 있지만 조회되는 이메일과 일치하지 않을 경우
+          if (sessionStorage.getItem("email") !== null && sessionStorage.getItem("email") !== fakeEmail) {
+            sessionStorage.setItem("email", fakeEmail)
+          }
+        }
+        sessionStorage.setItem("log", true)
+        //이메일 주소는 존재하지 않고 회원번호만 존재
+      } else {
+        //정보값 아무것도 없음
+        sessionStorage.setItem("log", false)
+      }
+    }
+  }
 
+  // console.log(email)
+  // console.log(memNum)
+  // console.log(email?.value)
+  // console.log(memNum?.value)
 
+}, 1000)
 
 
 const domain = window.location.hostname;
@@ -36,31 +74,6 @@ if (allowedDomains.includes(domain)) {
 
     SalesforceInteractions.setLoggingLevel(5);
 
-    //이메일 주소 및 로그인 여부    
-    const getInfo = setTimeout(() => {
-
-      const emailEl = SalesforceInteractions.cashDom("input#email");
-      const numEl = SalesforceInteractions.cashDom("input#golfzonNo");
-
-      if (numEl.length > 0) {
-        if (emailEl.val() === '' && numEl.val() === '') {
-          sessionStorage.setItem("log", false);
-        } else if (emailEl.val() !== '') {
-          sessionStorage.setItem("email", emailEl.val());
-          sessionStorage.setItem("log", true);
-          sessionStorage.setItem("truechk", "1");
-        } else if (emailEl.val() === '' && numEl.val() !== '') {
-          sessionStorage.setItem("email", numEl.val() + "@golfzon_f.com");
-          sessionStorage.setItem("log", true);
-          sessionStorage.setItem("truechk", "2");
-        }
-      }
-
-    }, 500);
-
-    // fnRecentGcDate();
-
-
     const sitemapConfig = {
       global: {
         // locale: getLocale(), //지역 정보 수집 X
@@ -68,7 +81,11 @@ if (allowedDomains.includes(domain)) {
           actionEvent.user = actionEvent.user || {};
           actionEvent.user.identities = actionEvent.user.identities || {};
           actionEvent.user.attributes = actionEvent.user.attributes || {};
-          actionEvent.user.identities.emailAddress = sessionStorage.getItem("email");
+
+          if (sessionStorage.getItem("email") !== null) {
+            actionEvent.user.identities.emailAddress = sessionStorage.getItem("email");
+          }
+
           actionEvent.user.attributes.referrerUrl = referrer;
           // 로그인 여부
           if (sessionStorage.getItem("log") !== null) {
@@ -100,7 +117,6 @@ if (allowedDomains.includes(domain)) {
                 }
               }
             });
-            //   }
           }),
         ],
         contentZones: [
@@ -108,10 +124,7 @@ if (allowedDomains.includes(domain)) {
             name: "C9_All_마지막라운드"
           },
           {
-            name: "C12_All_예약이탈다음"
-          },
-          {
-            name: "C12_All_예약이탈"
+            name: "C12_All_예약이탈", selector: "body"
           },
         ]
       },
@@ -168,16 +181,15 @@ if (allowedDomains.includes(domain)) {
               const listItems = SalesforceInteractions.cashDom(listItem).parent();
               const gcNoValue = SalesforceInteractions.cashDom(listItems).attr("data-gc_no");
               sessionStorage.setItem("recentGcNum", gcNoValue);
+
               SalesforceInteractions.sendEvent({
-                interaction: {
-                  name: `recentGcNum`,
-                },
                 user: {
                   attributes: {
                     recentGcNum: sessionStorage.getItem("recentGcNum"),
                   },
                 },
               })
+
             }),
             SalesforceInteractions.listener("click", ".calendar_type3 ul li", (ele) => {
               const targetEl = ele.target;
@@ -185,9 +197,6 @@ if (allowedDomains.includes(domain)) {
               const gcDateValue = SalesforceInteractions.cashDom(listItem).attr("data-date");
               sessionStorage.setItem("recentGcDate", gcDateValue);
               SalesforceInteractions.sendEvent({
-                interaction: {
-                  name: `recentGcDate`,
-                },
                 user: {
                   attributes: {
                     recentGcDate: sessionStorage.getItem("recentGcDate"),
@@ -200,12 +209,6 @@ if (allowedDomains.includes(domain)) {
             {
               name: "C11_PC_자주가는 골프장"
             },
-            {
-              name: "C12_PC_예약페이지이탈_PC시연"
-            },
-            {
-              name: "C12_tsettt"
-            }
           ]
         },
         {
@@ -509,8 +512,6 @@ if (allowedDomains.includes(domain)) {
           },
           listeners: [
             SalesforceInteractions.listener("click", "form[name='mainForm'] #fnLogin", (e) => {
-              //   const email = SalesforceInteractions.cashDom("#dwfrm_mcsubscribe_email").val();
-              //   if (email) {
               sessionStorage.setItem("log", true);
 
               SalesforceInteractions.sendEvent({
@@ -521,7 +522,6 @@ if (allowedDomains.includes(domain)) {
                   }
                 }
               });
-              //   }
             }),
           ]
         },
@@ -1039,11 +1039,6 @@ if (allowedDomains.includes(domain)) {
               return true;
             }
           },
-          // isMatch: () => {
-          //     if (window.location.href === "http://m.golfzoncounty.com/" || window.location.href === "https://m.golfzoncounty.com/" || window.location.href.includes("https://m.golfzoncounty.com/main") || window.location.href === "https://mv2qa.golfzoncounty.com/" || window.location.href === "https://mv2qa.golfzoncounty.com/") {
-          //         return true;
-          //     }
-          // },
           interaction: {
             name: "MO_메인 방문",
           },
@@ -1182,66 +1177,8 @@ if (allowedDomains.includes(domain)) {
             {
               name: "C11_MO_자주가는 골프장"
             },
-            {
-              name: "C12_PC_예약페이지이탈_MO시연"
-            },
           ]
         },
-        // {
-        //   // MO_예약(티타임선택) 페이지
-        //   name: "MO_예약(티타임선택) 방문",
-        //   isMatch: () => {
-        //     if (window.location.href.includes("https://m.golfzoncounty.com/reserve/main")) {
-        //       return true;
-        //     }
-        //   },
-        //   interaction: {
-        //     name: "MO_예약(티타임선택) 방문",
-        //   },
-        //   listeners: [
-        //     SalesforceInteractions.listener("click", "#selectReserve button", (ele) => {
-        //       SalesforceInteractions.sendEvent({
-        //         interaction: {
-        //           name: `MO_예약(티타임선택)_예약하기 모바일 클릭`,
-        //         },
-        //       })
-        //     }),
-        //     SalesforceInteractions.listener("click", "#timeList_reserve dd .ga4_event_reserve", (ele) => {
-        //       const targetEl = ele.target;
-        //       const gcNoValue = SalesforceInteractions.cashDom(targetEl).closest("dl").attr("data-gc_no");
-        //       sessionStorage.setItem("recentGcNum", gcNoValue);
-
-        //       SalesforceInteractions.sendEvent({
-        //         interaction: {
-        //           name: `recentGcNum`,
-        //         },
-        //         user: {
-        //           attributes: {
-        //             recentGcNum: sessionStorage.getItem("recentGcNum"),
-        //           },
-        //         },
-        //       })
-        //     }),
-        //     SalesforceInteractions.listener("click", "table.data-table", (ele)=>{
-
-        //         const targetEl = ele.target;
-        //         const gcDateValue = SalesforceInteractions.cashDom(targetEl).closest("a").attr("data-date");
-        //         sessionStorage.setItem("recentGcDate", gcDateValue);
-
-        //     })
-        //   ],
-        //   contentZones: [
-        //     {
-        //       name: "C11_MO_자주가는 골프장"
-        //     },
-        //     {
-        //       name: "C12_PC_예약페이지이탈_MO시연"
-        //     },
-        //     {
-        //       name:"C12_tsetttmo"
-        //     }
-        //   ]
-        // },
         {
           // MO_예약 완료 페이지
           name: "MO_예약 완료 방문",
@@ -1469,9 +1406,6 @@ if (allowedDomains.includes(domain)) {
       fnPageChange();
 
     }, 500);
-
-
-
 
     SalesforceInteractions.initSitemap(sitemapConfig);
 

@@ -4,21 +4,28 @@
     console.log("C10번 시작");
     let statusTemplateCheckC10, statusPcPopCheckC10, statusMoPopCheckC10;
 
+
+
     function fnInitC10(context, template) {
       console.log("C10_TEST_1");
+      // 로그인 여부
+      if (sessionStorage.getItem("log") !== "true") return;
       // if(SalesforceInteractions.cashDom("#email").val() === "") return;
-      if (SalesforceInteractions.cashDom("#golfzonNo").val() === "") return;
-      if (SalesforceInteractions.cashDom('#evg-new-template-c10').length > 0) return;
-      if (SalesforceInteractions.cashDom('#evg-new-template-c12').length > 0) return;
-
-      if (context.attributes.attributes.couponLength === undefined || context.attributes.attributes.couponLength === null || context.attributes.attributes.couponLength.value === "N" || context.attributes.attributes.couponLength.value === null) return;
-      if (context.attributes.attributes.couponName === undefined || context.attributes.attributes.couponName === null || context.attributes.attributes.couponName.value === "N" || context.attributes.attributes.couponName.value === null) return;
+      // if(SalesforceInteractions.cashDom("#golfzonNo").val() === "") return;
       /* 템플릿 체크 */
       if (SalesforceInteractions.cashDom("#evg-new-template-c8").length > 0) {
         return false;
       } else {
         statusTemplateCheckC10 = 1;
       }
+
+      if (SalesforceInteractions.cashDom('#evg-new-template-c10').length > 0) return;
+      if (SalesforceInteractions.cashDom('#evg-new-template-c12').length > 0) return;
+      console.log(context.attributes.attributes.couponLength);
+      console.log(context.attributes.attributes.couponName);
+      if (context.attributes.attributes.couponLength === undefined || context.attributes.attributes.couponLength === null || context.attributes.attributes.couponLength.value === "N" || context.attributes.attributes.couponLength.value === null) return;
+      if (context.attributes.attributes.couponName === undefined || context.attributes.attributes.couponName === null || context.attributes.attributes.couponName.value === "N" || context.attributes.attributes.couponName.value === null) return;
+
       const isPc = window.innerWidth > 1080;
       const popSelector = isPc ? "#divpop" : "#evtPop";
       const popNode = document.querySelector(popSelector);
@@ -37,8 +44,12 @@
       }
 
       // 오늘 하루 보지 않기 확인
-      const clickDate = fnGetCookie("connectNowC10");
+      // const clickDate = fnGetCookie("connectNowC10");
       // if (clickDate !== undefined) return;
+
+      //피로도 확인
+      let currentDate = new Date();
+      if (currentDate < new Date(localStorage.getItem("c10DayEnd"))) return;
 
       return { statusTemplateCheckC10, statusPcPopCheckC10, statusMoPopCheckC10 }
     }
@@ -60,6 +71,16 @@
     }
 
     function fnNowDateC10() {
+
+      //피로도 설정
+      let saveDate = new Date();
+      let endDate = new Date(saveDate.getFullYear(), saveDate.getMonth(), saveDate.getDate(), 23, 59, 59);
+      localStorage.setItem("c10DayEnd", endDate);
+      // SalesforceInteractions.sendEvent({
+      //     interaction: {
+      //         name: "C8. 예약 고객 대상 홀인원 보험 가입 홍보"
+      //     }
+      // })
 
       // 들어온 날짜 구하기
       const now = new Date();
@@ -91,6 +112,17 @@
       }
     }
 
+    function fnClickLanding() {
+
+      document.querySelector("#evg-new-template-c10 > a").addEventListener("click", (e) => {
+
+        alert("test");
+        sessionStorage.setItem("c10_landing", true);
+
+      })
+
+    }
+
     function fnApiInnerC10() {
       console.log("C10_TEST_3");
       const c10CouponName = context.attributes.attributes.couponName.value;
@@ -105,7 +137,10 @@
 
     }
 
+
+
     function fnStartC10(context, template) {
+
       const initC10Result = fnInitC10(context, template); // 결과를 변수에 저장
       if (initC10Result === undefined || initC10Result === false) return;
       if (initC10Result.statusTemplateCheckC10 !== 1 && initC10Result.statusMoPopCheckC10 !== 1) return;
@@ -115,6 +150,7 @@
       fnApiInnerC10();
       fnPopHideC10();
       fnNowDateC10();
+      fnClickLanding();
 
     }
 

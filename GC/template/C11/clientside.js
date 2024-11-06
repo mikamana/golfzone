@@ -8,6 +8,8 @@
     const deviceIndex = { "PC": 0, "mobile": 1 }[device];
 
     function fnInitC11(context, template) {
+      // 로그인 여부
+      if (sessionStorage.getItem("log") !== "true") return;
       // if (SalesforceInteractions.cashDom("#email").val() === "") return;
       if (SalesforceInteractions.cashDom("#golfzonNo").val() === "") return;
       console.log("C11_TEST_01");
@@ -25,22 +27,39 @@
     }
 
     function fnApiInsertC11(deviceCheck = device, gcNum = 1) {
-      fetch(`https://www.golfzoncounty.com/member_api/mingreenfeelist?gc_no=${gcNum}&chnl=w`)
+
+      // 골프장을 예약할 수 있는 정보가 없음, 예약할 수 없는 골프장을 제외시킨 후(파악해야함)
+      // 1. 다른 골프장을 추천하도록 할 것
+      // 2. 추천 자체를 못하도록 할 것
+      // 3. DC에서 골프장명 받은 후 태그에 적용
+      // 4. 오늘 날짜로 설정 후 url에 적용
+      // 5. 골프장번호 url에 적용
+
+      const fnC11ApiResult = fetch(`https://www.golfzoncounty.com/member_api/mingreenfeelist?gc_no=${gcNum}&chnl=w`)
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
-          console.log(deviceCheck);
+          if (data === undefined) {
 
-          const golfZoneName = data.entitys[0].golfclub_name;
-          const golfZoneHashTag = data.entitys[0].hash;
-          const golfZoneUrl = deviceCheck === "PC" ? data.entitys[0].reserve_url : replaceWWWwithM(data.entitys[0].reserve_url);
-          console.log(golfZoneUrl);
-          const golfZoneHash = golfZoneHashTag.split(",");
-          let hashArr = [];
-          golfZoneHash.forEach((node, idx) => {
-            const hashTag = "#" + node
-            hashArr.push(hashTag);
-          })
+            return false;
+
+          } else {
+
+            const golfZoneName = data.entitys[0].golfclub_name;
+            const golfZoneHashTag = data.entitys[0].hash;
+            const golfZoneUrl = deviceCheck === "PC" ? data.entitys[0].reserve_url : replaceWWWwithM(data.entitys[0].reserve_url);
+            const golfZoneHash = golfZoneHashTag.split(",");
+            let hashArr = [];
+            golfZoneHash.forEach((node, idx) => {
+              const hashTag = "#" + node
+              hashArr.push(hashTag);
+            })
+            const hash = hashArr.join(" ");
+            SalesforceInteractions.cashDom(".favorites_contents_info_hashtag_wrap").text(hash);
+            SalesforceInteractions.cashDom(".favorites_contents_info_name").text(golfZoneName);
+            SalesforceInteractions.cashDom(".favorites_contents_info_randing_ttime")[0].attributes.href.value = golfZoneUrl;
+            return true
+          }
 
           function replaceWWWwithM(url) {
             if (url.includes("www.")) {
@@ -51,28 +70,34 @@
             }
           }
 
-          const hash = hashArr.join(" ");
 
-          SalesforceInteractions.cashDom(".favorites_contents_info_hashtag_wrap").text(hash);
-          SalesforceInteractions.cashDom(".favorites_contents_info_name").text(golfZoneName);
-          SalesforceInteractions.cashDom(".favorites_contents_info_randing_ttime")[0].attributes.href.value = golfZoneUrl;
+        });
 
-        })
+      return fnC11ApiResult;
+
+
+
+
     }
 
     function fnStartC11(context, template) {
 
-      const gcNum = context.attributes.attributes.favGolf.value
-
       const initC11 = fnInitC11(context, template);
       console.log(initC11);
       if (initC11 !== true) return;
-      fnInsertC11(context, template);
+      const gcNum = context.attributes.attributes.favGolf.value
+      let fnApiResultC11;
       if (device === "PC") {
-        fnApiInsertC11(device, gcNum)
+        fnApiResultC11 = fnApiInsertC11(device, gcNum)
+
       } else if (device === "mobile") {
-        fnApiInsertC11(device, gcNum)
+        fnApiResultC11 = fnApiInsertC11(device, gcNum)
+
       }
+
+      if (fnApiResultC11 === false) return;
+      fnInsertC11(context, template);
+
 
     }
 
@@ -87,7 +112,7 @@
 
         }
         resolve(true);
-      }, 500);
+      }, 50);
     })
 
 
