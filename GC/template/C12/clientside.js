@@ -1,63 +1,57 @@
 (function () {
   function apply(context, template) {
     console.log("C12번 시작");
-    let statusTemplateCheck, statusPcPopCheck, statusMoPopCheck;
 
     function fnInit(context, template) {
-      console.log("C12_TEST_1");
-      console.log(context.attributes.attributes.memberName.value);
-      console.log(context.attributes.attributes.recentGcNum.value);
-      // 로그인 여부
-      if (sessionStorage.getItem("log") !== "true") return;
-      // if (SalesforceInteractions.cashDom("#email").val() === "") return;
-      if (SalesforceInteractions.cashDom("#golfzonNo").val() === "") return;
-      console.log("C12_TEST_1_1");
-      if (context.attributes.attributes.recentGcNum === undefined || context.attributes.attributes.recentGcNum === null || context.attributes.attributes.recentGcNum.value === "N") return;
-      console.log("C12_TEST_1_2");
-      if (context.attributes.attributes.memberName === undefined || context.attributes.attributes.memberName === null || context.attributes.attributes.memberName.value === "N") return;
-      console.log("C12_TEST_1_3");
-      if (context.attributes.attributes.recentGcDate === undefined || context.attributes.attributes.recentGcDate === null || context.attributes.attributes.recentGcDate.value === "N") return;
-      console.log("C12_TEST_2");
-      /* 템플릿 체크 */
-      if (SalesforceInteractions.cashDom("#evg-new-template-c8").length > 0) return;
-      if (SalesforceInteractions.cashDom("#evg-new-template-c9").length > 0 &&
-        document.querySelector("#evg-new-template-c9 > .modal_popup").style.display !== "none") {
-        return false;
-      } else {
-        statusTemplateCheck = 1;
-      }
-      console.log("C12_TEST_3");
-      if (SalesforceInteractions.cashDom("#evg-new-template-c12").length > 0) return;
-      if (window.location.href.includes("https://www.golfzoncounty.com/reserve/reserveConfirm") || window.location.href.includes("https://www.golfzoncounty.com/reserve/reserveComplete")
-        || window.location.href.includes("https://m.golfzoncounty.com/reserve/reserveConfirm") || window.location.href.includes("https://m.golfzoncounty.com/reserve/reserveComplete")
-      ) return;
-
-      const isPc = window.innerWidth > 1080;
-      const popSelector = isPc ? ".evtPop" : "#evtPop";
-      const popNode = document.querySelector(popSelector);
-      const isVisible = isPc ? "visible" : "block";
-      /* 팝업창 체크 */
-      if (popNode) {
-        if (popNode.style.visibility === isVisible || popNode.style.display === isVisible) {
-          return false
+      return new Promise((resolve, reject) => {
+        let statusTemplateCheck, statusPcPopCheck, statusMoPopCheck;
+        const referrer = document.referrer;
+        // 로그인 여부
+        if (sessionStorage.getItem("log") !== "true") return;
+        // if (SalesforceInteractions.cashDom("#email").val() === "") return;
+        if (SalesforceInteractions.cashDom("#golfzonNo").val() === "") return;
+        if (referrer.includes("/reserve/main") !== true) return;
+        if (context.attributes.attributes.recentGcNum === undefined || context.attributes.attributes.recentGcNum === null || context.attributes.attributes.recentGcNum.value === "N" || context.attributes.attributes.recentGcNum.value === "undefined") return;
+        if (context.attributes.attributes.memberName === undefined || context.attributes.attributes.memberName === null || context.attributes.attributes.memberName.value === "N") return;
+        if (context.attributes.attributes.recentGcDate === undefined || context.attributes.attributes.recentGcDate === null || context.attributes.attributes.recentGcDate.value === "N") return;
+        /* 템플릿 체크 */
+        if (SalesforceInteractions.cashDom("#evg-new-template-c8").length > 0) return;
+        if (SalesforceInteractions.cashDom("#evg-new-template-c9").length > 0 &&
+          document.querySelector("#evg-new-template-c9 > .modal_popup").style.display !== "none") {
+          return false;
+        } else {
+          statusTemplateCheck = 1;
+        }
+        if (SalesforceInteractions.cashDom("#evg-new-template-c12").length > 0) return;
+        if (window.location.href.includes("https://www.golfzoncounty.com/reserve/reserveConfirm") || window.location.href.includes("https://www.golfzoncounty.com/reserve/reserveComplete")
+          || window.location.href.includes("https://m.golfzoncounty.com/reserve/reserveConfirm") || window.location.href.includes("https://m.golfzoncounty.com/reserve/reserveComplete")
+        ) return;
+        const isPc = window.innerWidth > 1080;
+        const popSelector = isPc ? ".evtPop" : "#evtPop";
+        const popNode = document.querySelector(popSelector);
+        const isVisible = isPc ? "visible" : "block";
+        /* 팝업창 체크 */
+        if (popNode) {
+          if (popNode.style.visibility === isVisible || popNode.style.display === isVisible) {
+            return false
+          } else {
+            statusMoPopCheck = 1;
+            statusPcPopCheck = 1;
+          }
         } else {
           statusMoPopCheck = 1;
           statusPcPopCheck = 1;
         }
-      } else {
-        statusMoPopCheck = 1;
-        statusPcPopCheck = 1;
-      }
-      console.log("C12_TEST_4");
+        // 피로도 확인 - 쿠키
+        // const clickDate = fnGetCookie("connectNowC12");
+        // if (clickDate !== undefined) return;
+        // 피로도 확인 - 로컬 스토리지
+        let currentDate = new Date();
+        if (currentDate < new Date(localStorage.getItem("c12DayEnd"))) return;
+        resolve({ statusTemplateCheck, statusPcPopCheck, statusMoPopCheck })
+        // return { statusTemplateCheck, statusPcPopCheck, statusMoPopCheck }
+      })
 
-      // 피로도 확인 - 쿠키
-      // const clickDate = fnGetCookie("connectNowC12");
-      // if (clickDate !== undefined) return;
-      // 피로도 확인 - 로컬 스토리지
-      let currentDate = new Date();
-      if (currentDate < new Date(localStorage.getItem("c12DayEnd"))) return;
-      console.log("C12_TEST_5");
-      return { statusTemplateCheck, statusPcPopCheck, statusMoPopCheck }
 
     }
 
@@ -100,14 +94,14 @@
       document.cookie = `connectNowC12=${now}; expires=${nextDay}`;
 
     }
-
-    // 쿠키 가져오기
-    function fnGetCookie(name) {
-      let matches = document.cookie.match(new RegExp(
-        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-      ));
-      return matches ? decodeURIComponent(matches[1]) : undefined;
-    }
+    /* // 쿠키 가져오기
+        function fnGetCookie(name) {
+            let matches = document.cookie.match(new RegExp(
+                "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+            ));
+            return matches ? decodeURIComponent(matches[1]) : undefined;
+        }
+     */
 
     function fnPopHide() {
       if (window.innerWidth > 1080) {
@@ -130,10 +124,8 @@
 
       const c12GcDate = context.attributes.attributes.recentGcDate.value;
       const c12GcNum = context.attributes.attributes.recentGcNum.value;
-
+      console.log(c12GcNum);
       SalesforceInteractions.cashDom(".text_name").text(context.attributes.attributes.memberName.value);
-
-
 
       fetch(`https://www.golfzoncounty.com/member_api/mingreenfeelist?gc_no=${c12GcNum}&chnl=w`)
         .then((res) => res.json())
@@ -179,55 +171,73 @@
       const targetNode = document.querySelector('body');
       const config = { childList: true, subtree: true };
 
-      /* const addClickListener = (selector, delay = 1005) => {
-          const elements = document.querySelectorAll(selector);
-          elements.forEach((element) =>
-              element.addEventListener("click", () => setTimeout(() => fnStart(context, template), delay))
-          );
-      }; */
+      const addClickListener = (selector, delay = 1005) => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach((element) => {
+          // element.addEventListener("click", () => setTimeout(() => fnStart(context, template), delay));
+          element.addEventListener("click", () => {
+            setTimeout(() => {
+              fnStart(context, template)
+            }, delay);
+          });
+        })
 
-      // const setObserver = () => {
-      //     const observer = new MutationObserver((mutationsList) => {
-      //         mutationsList.forEach((mutation) => {
-      //             if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-      //                 mutation.addedNodes.forEach((node) => {
-      //                     if (node.id === 'evg-new-template-c9') {
-      //                         addClickListener("#evg-new-template-c9 .contents_inner_info_image_button", 200);
-      //                         addClickListener("#evg-new-template-c9 .contents_inner_info_title_today_btn", 200);
-      //                     } else if (node.id === 'evg-new-template-c8') {
-      //                         addClickListener(".contents_inner_button_right_btn", 200);
-      //                         addClickListener(".contents_inner_button_left_btn", 200);
-      //                     }
-      //                 });
-      //             }
-      //         });
-      //     });
+      };
 
-      //     observer.observe(targetNode, config);
-      // }
+      const setObserver = () => {
+        const observer = new MutationObserver((mutationsList) => {
+          mutationsList.forEach((mutation) => {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+              mutation.addedNodes.forEach((node) => {
+                if (node.id === 'evg-new-template-c9') {
+                  addClickListener("#evg-new-template-c9 .contents_inner_info_image_button", 200);
+                  addClickListener("#evg-new-template-c9 .contents_inner_info_title_today_btn", 200);
+                } else if (node.id === 'evg-new-template-c8') {
+                  addClickListener(".contents_inner_button_right_btn", 200);
+                  addClickListener(".contents_inner_button_left_btn", 200);
+                }
+              });
+            }
+          });
+        });
+
+        observer.observe(targetNode, config);
+      }
 
 
 
-      const initialize = () => {
+      const initialize = (context, template) => {
+        console.log(userGroup);
         if (userGroup !== "Control") {
           fnStart(context, template);
-          /* addClickListener(".contents_inner_info_image_button");
+          addClickListener(".contents_inner_info_image_button");
           addClickListener(".contents_inner_info_title_today_btn");
           addClickListener(".leftB .close_btn");
           addClickListener("#evtPop .btn1 button, #evtPop .btn2 button");
-          addClickListener(".contents_inner_button_right_btn, .contents_inner_button_left_btn"); */
+          addClickListener(".contents_inner_button_right_btn, .contents_inner_button_left_btn");
         }
         // resolve(true);
       };
 
       if (isIphone) {
-        setTimeout(initialize, 500);
-        // setObserver();
-      } else {
-        window.addEventListener("load", () => {
-          setTimeout(initialize, 500)
-          // setObserver();
+        SalesforceInteractions.DisplayUtils.pageInactive(2050).then((ele) => {
+          setTimeout(() => {
+            initialize(context, template);
+          }, 200);
         });
+        // setTimeout(initialize, 2050);
+        setObserver();
+      } else {
+        SalesforceInteractions.DisplayUtils.pageInactive(2050).then((ele) => {
+          setTimeout(() => {
+            initialize(context, template);
+          }, 200);
+        });
+        setObserver();
+        // window.addEventListener("load", () => {
+        //     setTimeout(initialize, 2050)
+        //     setObserver();
+        // });
       }
     });
   }
