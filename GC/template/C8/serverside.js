@@ -15,16 +15,19 @@ export class NewTemplate implements CampaignTemplateComponent {
   @title("이미지 URL")
   imageUrl: string = "https://image.mkt.golfzoncounty.com/lib/fe3211747364047a741773/m/1/28c527a0-332b-47c0-a5b2-f43a7426bedf.png";
 
-  // @title("랜딩URL_PC")
-  // randingUrlPC: string = "https://www.golfzoncounty.com/myround/coupon";
+  @title("랜딩URL_PC")
+  randingUrlPC: string = "https://www.golfzoncounty.com/myround/coupon";
 
-  // @title("랜딩URL_MO")
-  // randingUrlMO: string = "https://m.golfzoncounty.com/myround/coupon";
+  @title("랜딩URL_MO")
+  randingUrlMO: string = "https://m.golfzoncounty.com/myround/coupon";
 
-
+  @title("버튼 색상")
+  btnColor: string = "#000000";
 
   run(context: CampaignComponentContext) {
-    return {};
+    return {
+      attributes: context.user
+    };
   }
 
 }

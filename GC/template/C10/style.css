@@ -24,6 +24,7 @@ div.pc_push_popup_c10 > a.pc_push_popup{
   z-index: 1111;
   padding: 17px 0px;
   box-sizing: border-box;
+  word-break: keep-all;
   gap:20px;
   color:#000;
 }
@@ -66,6 +67,7 @@ div.mo_push_popup_c10 > a.mo_push_popup{
   z-index: 1111;
   padding: 17px 10px; 
   gap:10px;
+  word-break: keep-all;
   box-sizing: border-box;
   color:#000;
 }

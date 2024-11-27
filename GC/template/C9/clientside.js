@@ -15,11 +15,9 @@
 
     // 초기화 함수
     function fnInitC9(context, template) {
-      console.log("C9_TEST_1");
       if (window.location.href === "https://www.golfzoncounty.com/" || window.location.href === "https://www.golfzoncounty.com/main" || window.location.href === "https://m.golfzoncounty.com/main" || window.location.href === "https://m.golfzoncounty.com/") return;
       // 로그인 여부
       if (sessionStorage.getItem("log") !== "true") return;
-      console.log("C9_TEST_01_1");
       // 랜딩페이지 체크
       if (sessionStorage.getItem("c10_landing") === "true") return;
       if (sessionStorage.getItem("c8_landing") === "true") return;
@@ -28,19 +26,14 @@
       // if (SalesforceInteractions.cashDom("#email").val() === "") return;
       if (SalesforceInteractions.cashDom("#golfzonNo").val() === "") return;
       // 템플릿 중복 체크
-      console.log("C9_TEST_01_2");
       if (SalesforceInteractions.cashDom("#evg-new-template-c9").length > 0) return;
       // 고객 속성 체크
 
       //이 시점에 고객 정보를 가져오기 못함
-      console.log(context.attributes.attributes.histRoundAreaNum);
-      console.log(context.attributes.attributes.memberName);
-      console.log(context.attributes.attributes.histRoundAreaArea);
-      console.log(context.attributes.attributes.histRoundAreaName);
       if (context.attributes.attributes.histRoundAreaNum === undefined || context.attributes.attributes.histRoundAreaNum === null || context.attributes.attributes.histRoundAreaNum.value === "N") return;
-      console.log("C9_TEST_01_3");
+      if (context.attributes.attributes.histRoundAreaName === undefined || context.attributes.attributes.histRoundAreaName === null || context.attributes.attributes.histRoundAreaName.value === "N") return;
+      if (context.attributes.attributes.histRoundAreaArea === undefined || context.attributes.attributes.histRoundAreaArea === null || context.attributes.attributes.histRoundAreaArea.value === "N") return;
       if (context.attributes.attributes.memberName === undefined || context.attributes.attributes.memberName === null || context.attributes.attributes.memberName.value === "N") return;
-      console.log("C9_TEST_2");
       // 피로도 확인 - 쿠키
       // const clickDate = fnGetCookie("clickNowC9");
       // if (clickDate !== undefined) return;
@@ -55,13 +48,11 @@
       // 메인 페이지 제외
       // referrer 체크
       const referrerUrl = document.referrer;
-      console.log(referrerUrl);
       return ["https://www.golfzoncounty.com/", "https://www.golfzoncounty.com/main", "https://m.golfzoncounty.com/main", "https://m.golfzoncounty.com/"].includes(referrerUrl);
 
     }
     // 삽입 함수
     function fnInsertC9(context, template) {
-      console.log("C9_TEST_insert");
       const htmlArr = template(context).split("</br>");
       const device = window.innerWidth > 1080 ? "PC" : window.innerWidth > 768 ? "Tablet" : "mobile";
       const deviceIndex = { "PC": 0, "Tablet": 1, "mobile": 2 }[device];
@@ -76,56 +67,90 @@
     }
 
     // APi 호출 함수
-    function fnApiInnerC9(context, template) {
+    async function fnApiInnerC9(context, template) {
 
       const memberName = context.attributes.attributes.memberName.value;
       const roundAreaArea = parseInt(Number(context.attributes.attributes.histRoundAreaArea.value));
       const roundAreaName = context.attributes.attributes.histRoundAreaName.value;
       const roundAreaNum = parseInt(Number(context.attributes.attributes.histRoundAreaNum.value)) || 4;
-
-      const setGolfClubInfo = (apiData) => {
-
+      const replaceWWWwithM = (url) => url.includes("www.") ? url.replace("www.", "m.") : (console.warn("URL에 'www.'가 포함되어 있지 않습니다."), url);
 
 
-        SalesforceInteractions.cashDom(".contents_inner_info_recom .text_name").text(`${memberName}님`);
+      const fnC9ApiResult = await fetch(`https://www.golfzoncounty.com/member_api/mingreenfeelist?gc_no=${roundAreaNum}&chnl=w`)
+        .then((res) => res.json())
+        .then((data) => {
 
-
-        const replaceWWWwithM = (url) => url.includes("www.") ? url.replace("www.", "m.") : (console.warn("URL에 'www.'가 포함되어 있지 않습니다."), url);
-
-        console.log(apiData);
-        // 골프장을 예약할 수 있는 정보가 없음, 예약할 수 없는 골프장을 제외시킨 후(파악해야함)
-        // 1. 다른 골프장을 추천하도록 할 것
-        // 2. 추천 자체를 못하도록 할 것
-        // 3. DC에서 골프장명 받은 후 태그에 적용
-        // 4. 오늘 날짜로 설정 후 url에 적용
-        // 5. 골프장번호 url에 적용
-
-        if (apiData === undefined) {
-          if (window.innerWidth > 1080) {
-            // DC에서 골프장명 받아야함
-            SalesforceInteractions.cashDom(".contents_inner_info_title_middle").text(roundAreaName);
-            SalesforceInteractions.cashDom(".contents_inner_button a")[0].attributes.href.value = `https://www.golfzoncounty.com/reserve/main?gc_no=${roundAreaNum}&area_code=${roundAreaArea}&select_date=${formattedDate}`;
+          if (Object.keys(data).length <= 0) {
+            return false;
           } else {
-            // DC에서 골프장명 받아야함
-            SalesforceInteractions.cashDom(".contents_inner_info_title_middle").text(roundAreaName);
-            const unReserveUrl = replaceWWWwithM(`https://www.golfzoncounty.com/reserve/main?gc_no=${roundAreaNum}&area_code=${roundAreaArea}&select_date=${formattedDate}`)
-            SalesforceInteractions.cashDom(".contents_inner_button a")[0].attributes.href.value = unReserveUrl
+            fnInsertC9(context, template);
+            fnRemoveC9(context, template);
+
+            const fnC9SortApiSort = (data) => {
+              return data.entitys.sort((a, b) => {
+                // 서로의 result_date를 비교하여 오름차순으로 정렬
+                return a.reserve_date - b.reserve_date;
+              });
+            };
+
+
+
+
+
+            SalesforceInteractions.cashDom(".contents_inner_info_recom .text_name").text(`${memberName}님`);
+            if (window.innerWidth > 1080) {
+              // DC에서 골프장명 받아야함
+              SalesforceInteractions.cashDom(".contents_inner_info_title_middle").text(roundAreaName);
+              SalesforceInteractions.cashDom(".contents_inner_button a")[0].attributes.href.value = `${fnC9SortApiSort(data)[0].reserve_url}`;
+
+            } else {
+              // DC에서 골프장명 받아야함
+              SalesforceInteractions.cashDom(".contents_inner_info_title_middle").text(roundAreaName);
+              const unReserveUrl = replaceWWWwithM(`${fnC9SortApiSort(data)[0].reserve_url}`)
+              SalesforceInteractions.cashDom(".contents_inner_button a")[0].attributes.href.value = unReserveUrl
+            }
           }
-        } else {
-          const golfclubName = apiData[0].golfclub_name;
-          const reserveUrl = window.innerWidth > 1080 ? apiData[0].reserve_url : replaceWWWwithM(apiData[0].reserve_url);
 
-          SalesforceInteractions.cashDom(".contents_inner_info_title_middle").text(golfclubName);
-          SalesforceInteractions.cashDom(".contents_inner_button a")[0].attributes.href.value = reserveUrl;
-        }
+        })
 
-      };
+      /* const setGolfClubInfo = (apiData) => {
 
-      setTimeout(() => {
-        fetch(`https://www.golfzoncounty.com/member_api/mingreenfeelist?gc_no=${roundAreaNum}&chnl=w`)
-          .then((res) => res.json())
-          .then((data) => setGolfClubInfo(data.entitys));
-      }, 50);
+          
+
+
+          // 골프장을 예약할 수 있는 정보가 없음, 예약할 수 없는 골프장을 제외시킨 후(파악해야함)
+          // 1. 다른 골프장을 추천하도록 할 것
+          // 2. 추천 자체를 못하도록 할 것
+          // 3. DC에서 골프장명 받은 후 태그에 적용
+          // 4. 오늘 날짜로 설정 후 url에 적용
+          // 5. 골프장번호 url에 적용
+          
+          if(apiData === undefined){
+              if(window.innerWidth > 1080){
+                  // DC에서 골프장명 받아야함
+                  SalesforceInteractions.cashDom(".contents_inner_info_title_middle").text(roundAreaName);
+                  SalesforceInteractions.cashDom(".contents_inner_button a")[0].attributes.href.value = `https://www.golfzoncounty.com/reserve/main?gc_no=${roundAreaNum}&area_code=${roundAreaArea}&select_date=${formattedDate}`;
+              }else{
+                  // DC에서 골프장명 받아야함
+                  SalesforceInteractions.cashDom(".contents_inner_info_title_middle").text(roundAreaName);
+                  const unReserveUrl = replaceWWWwithM(`https://www.golfzoncounty.com/reserve/main?gc_no=${roundAreaNum}&area_code=${roundAreaArea}&select_date=${formattedDate}`)
+                  SalesforceInteractions.cashDom(".contents_inner_button a")[0].attributes.href.value = unReserveUrl
+              }
+          }else{
+              const golfclubName = apiData[0].golfclub_name;
+              const reserveUrl = window.innerWidth > 1080 ? apiData[0].reserve_url : replaceWWWwithM(apiData[0].reserve_url);
+
+              SalesforceInteractions.cashDom(".contents_inner_info_title_middle").text(golfclubName);
+              SalesforceInteractions.cashDom(".contents_inner_button a")[0].attributes.href.value = reserveUrl;
+          }
+          
+      };  */
+
+      /* setTimeout(() => {
+          fetch(`https://www.golfzoncounty.com/member_api/mingreenfeelist?gc_no=${roundAreaNum}&chnl=w`)
+              .then((res) => res.json())
+              .then((data) => setGolfClubInfo(data.entitys));
+      }, 50); */
 
 
     }
@@ -190,15 +215,11 @@
 
     // 전체 함수
     function fnStartC9(context, template) {
-      console.log("C9_TEST_00");
       fnSetCloseC9(context, template);
       const initC9Result = fnInitC9(context, template); // 결과를 변수에 저장
-      console.log(initC9Result);
       setTimeout(() => {
         if (initC9Result === undefined || initC9Result === false) return; // 저장한 결과로 조건 검사
-        fnInsertC9(context, template);
         fnApiInnerC9(context, template);
-        fnRemoveC9(context, template);
       }, 50)
 
     }
@@ -220,11 +241,8 @@
 
 
     return new Promise((resolve, reject) => {
-      console.log("C9_TEST_000");
       // window.addEventListener("load", (e) => {
-      console.log("C9_TEST_00");
       setTimeout(() => {
-        console.log("C9_TEST_0");
         fnStartC9(context, template);
         resolve(true);
       }, 400);

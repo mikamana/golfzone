@@ -9,7 +9,9 @@ body{
   left: 0px;
   bottom: 30px; */
 }
-
+body {
+  /* position: relative; */
+}
 /* PC */
 
 
@@ -172,10 +174,19 @@ div.c8_mo_modal_popup_wrap > div.modal_popup{
   width:100vw;
   box-sizing: border-box;
   position: absolute;
-  bottom: 0px;
+  bottom: -200px;
   z-index: 13;
-  animation-duration: 2s;
-  animation-name: modal_slidein;
+  /* transition: all 4s ease-out; */
+  transition: all 1s ease-in-out;
+  
+  /* animation-duration: 2s;
+  animation-name: modal_slidein; */
+}
+
+div.c8_mo_modal_popup_wrap > div.modal_popup.active{
+  bottom: 0px;
+  /* transition: all 2s ease-out; */
+
 }
 
 div.c8_mo_modal_popup_wrap > div.modal_popup > div.contents_inner_info{

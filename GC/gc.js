@@ -1,5 +1,5 @@
 // 테스트 시간
-console.log("테스트 시간 24-11-05 10:35");
+console.log("테스트 시간 24-11-20 16:10");
 
 // refferer
 const referrer = document.referrer;
@@ -7,16 +7,35 @@ const referrer = document.referrer;
 //골프ID 값 가져오기
 const getGolfId = () => {
 
-  const gcNumName = document.querySelector(".gnb ul li > *:nth-child(2) > *:first-child > *:nth-child(2) > *:first-child > *:first-child").getAttribute('href');
-  const gcNum = gcNumName.split('gc_no=')[1].split('&')[0];
-  return gcNum;
+  const url = '/gcounty/info/reservepc/?gc_no=48';
+  const fullUrl = new URL(url, 'https://golfzoncounty.com'); // 베이스 URL을 추가하여 전체 URL로 변환
+  const params = new URLSearchParams(fullUrl.search);
+  const gcNum = params.get('gc_no');
+  return gcNum
 
+}
+
+function formatDateString(dateString) {
+  // 날짜 문자열에서 연도, 월, 일을 추출
+  const regex = /(\d{4})년\s(\d{1,2})월\s(\d{1,2})일/;
+  const match = dateString.match(regex);
+
+  if (!match) {
+    throw new Error("날짜 형식이 잘못되었습니다.");
+  }
+
+  const year = match[1];
+  const month = match[2].padStart(2, "0"); // 월을 두 자리로 변환
+  const day = match[3].padStart(2, "0");   // 일을 두 자리로 변환
+
+  return `${year}${month}${day}`;
 }
 
 //식별 정보 값 가져오기
 const getLoginInfo = setTimeout(() => {
-  const email = document.querySelector("input#email")
-  const memNum = document.querySelector("input#golfzonNo")
+  const email = document.querySelector("input#email");
+  const memNum = document.querySelector("input#golfzonNo");
+
   //식별 코드 존재 확인
   if (email !== null && memNum !== null) {
     const fakeEmail = `${memNum.value}@golfzon_f.com`
@@ -25,13 +44,11 @@ const getLoginInfo = setTimeout(() => {
       //세션에 미리 저장된 email이 없을 때
       if (sessionStorage.getItem("email") === null) {
         sessionStorage.setItem("email", email.value);
-        console.log("test1");
         sessionStorage.setItem("log", true)
       } else {
         //세션에 미리 저장된 email 값이 존재할 경우, 저장된 email과 현재 로그인 이메일 일치 여부 확인
         if (sessionStorage.getItem("email") !== null && email.value !== sessionStorage.getItem("email")) {
           sessionStorage.setItem("email", email.value);
-          console.log("test2");
           sessionStorage.setItem("log", true)
         }
       }
@@ -56,12 +73,8 @@ const getLoginInfo = setTimeout(() => {
     }
   }
 
-  // console.log(email)
-  // console.log(memNum)
-  // console.log(email?.value)
-  // console.log(memNum?.value)
 
-}, 1000)
+}, 2000);
 
 
 const domain = window.location.hostname;
@@ -183,13 +196,33 @@ if (allowedDomains.includes(domain)) {
               sessionStorage.setItem("recentGcNum", gcNoValue);
 
               SalesforceInteractions.sendEvent({
+                interaction: {
+                  name: `PC_예약(티타임선택) 최근 클릭 골프장 번호`,
+                },
                 user: {
                   attributes: {
                     recentGcNum: sessionStorage.getItem("recentGcNum"),
                   },
                 },
               })
+            }),
+            SalesforceInteractions.listener("click", ".dBox_wrap ul li", (ele) => {
+              const targetEl = ele.target;
+              const listItem = SalesforceInteractions.cashDom(targetEl).closest("li");
+              const listItems = SalesforceInteractions.cashDom(listItem).parent();
+              const gcNoValue = SalesforceInteractions.cashDom(listItems).attr("data-gc_no");
+              sessionStorage.setItem("recentGcNum", gcNoValue);
 
+              SalesforceInteractions.sendEvent({
+                interaction: {
+                  name: `PC_예약(티타임선택) 최근 클릭 골프장 번호`,
+                },
+                user: {
+                  attributes: {
+                    recentGcNum: sessionStorage.getItem("recentGcNum"),
+                  },
+                },
+              })
             }),
             SalesforceInteractions.listener("click", ".calendar_type3 ul li", (ele) => {
               const targetEl = ele.target;
@@ -197,13 +230,94 @@ if (allowedDomains.includes(domain)) {
               const gcDateValue = SalesforceInteractions.cashDom(listItem).attr("data-date");
               sessionStorage.setItem("recentGcDate", gcDateValue);
               SalesforceInteractions.sendEvent({
+                interaction: {
+                  name: `PC_예약(티타임선택) 최근 클릭 골프장 날짜`,
+                },
                 user: {
                   attributes: {
                     recentGcDate: sessionStorage.getItem("recentGcDate"),
                   },
                 },
               })
-            })
+            }),
+            SalesforceInteractions.listener("click", ".dBox_wrap ul li", (ele) => {
+              const targetEl = ele.target;
+              const listItem = SalesforceInteractions.cashDom(targetEl).closest("#reserveList");
+              const gcName = listItem[0].previousSibling.previousSibling.children[0].innerText;
+              sessionStorage.setItem("recentGcName", gcName);
+
+              SalesforceInteractions.sendEvent({
+                interaction: {
+                  name: `PC_예약(티타임선택) 최근 클릭 골프장명`,
+                },
+                user: {
+                  attributes: {
+                    recentGcName: sessionStorage.getItem("recentGcName"),
+                  },
+                },
+              })
+
+            }),
+            SalesforceInteractions.listener("click", ".dBox_wrap ul li", (ele) => {
+              setTimeout(() => {
+                const targetEl = ele.target;
+                const listItem = SalesforceInteractions.cashDom(targetEl).closest(".container");
+                const gcDateStr = listItem[0].nextSibling.nextElementSibling.children[0].children[0].children[2].innerText;
+                const gcDate = formatDateString(gcDateStr);
+                sessionStorage.setItem("recentGcDate", gcDate);
+                SalesforceInteractions.sendEvent({
+                  interaction: {
+                    name: `PC_예약(티타임선택) 최근 클릭 골프장 날짜`,
+                  },
+                  user: {
+                    attributes: {
+                      recentGcDate: sessionStorage.getItem("recentGcDate"),
+                    },
+                  },
+                })
+
+
+
+              }, 500)
+
+            }),
+            SalesforceInteractions.listener("click", ".dropBox-orange ul li", (ele) => {
+              const targetEl = ele.target;
+              const listItem = SalesforceInteractions.cashDom(targetEl).closest("li");
+              // const gcName = listItem[0].previousSibling.previousSibling.children[0].children[0].innerText
+              const gcName = SalesforceInteractions.cashDom(listItem).attr("data-cc_name");
+              sessionStorage.setItem("recentGcName", gcName);
+
+              SalesforceInteractions.sendEvent({
+                interaction: {
+                  name: `PC_예약(티타임선택) 최근 클릭 골프장명`,
+                },
+                user: {
+                  attributes: {
+                    recentGcName: sessionStorage.getItem("recentGcName"),
+                  },
+                },
+              })
+            }),
+            SalesforceInteractions.listener("click", ".dropBox-orange ul li", (ele) => {
+              setTimeout(() => {
+                const targetEl = ele.target;
+                const listItem = SalesforceInteractions.cashDom(targetEl).closest(".container");
+                const gcDateStr = listItem[0].nextSibling.nextElementSibling.children[0].children[0].children[2].innerText
+                const gcDate = formatDateString(gcDateStr);
+                sessionStorage.setItem("recentGcDate", gcDate);
+                SalesforceInteractions.sendEvent({
+                  interaction: {
+                    name: `PC_예약(티타임선택) 최근 클릭 골프장 날짜`,
+                  },
+                  user: {
+                    attributes: {
+                      recentGcDate: sessionStorage.getItem("recentGcDate"),
+                    },
+                  },
+                })
+              }, 500)
+            }),
           ],
           contentZones: [
             {
@@ -318,13 +432,52 @@ if (allowedDomains.includes(domain)) {
         {
           // PC_예약 완료 페이지
           name: "PC_예약 완료 방문",
-          isMatch: () => {
-            if (window.location.href.includes("https://www.golfzoncounty.com/reserve/reserveComplete")) {
-              return true;
-            }
-          },
+          isMatch: () => new Promise((resolve, reject) => {
+            setTimeout(() => {
+              if (window.location.href.includes("https://www.golfzoncounty.com/reserve/reserveComplete")) {
+                resolve(true);
+              }
+            }, 1000);
+          }),
           interaction: {
+            // name: SalesforceInteractions.OrderInteractionName.Purchase,
             name: "PC_예약 완료 방문",
+            /* order: {
+                id: SalesforceInteractions.DisplayUtils.pageElementLoaded("#reserveComplete", "html").then(
+                    (ele) => {
+                        if (window.location.href.includes("https://www.golfzoncounty.com/reserve/reserveComplete")) {
+                            const ccArray = [];
+                            SalesforceInteractions.cashDom(".innerWrap .list01").each((index, data) => {
+                                const ccFilter = Array.from(data.children).filter(dt => dt.tagName === "P");
+                                ccFilter.forEach((dd) => {
+                                    const golfResult = {
+                                        name: dd.innerText,
+                                        num: dd.children[0].getAttribute('data-cc_code')
+                                    }
+                                    ccArray.push(golfResult);
+                                })
+                            });
+                            const resResult = SalesforceInteractions.cashDom(".tit_info").text();
+                            const result = ccArray.filter((d) => {
+                                return d.name === resResult;
+                            })
+                            return result[0].num
+                        }
+
+                    },
+                ),
+                lineItems: () => {
+                    let purchaseLineItems = []
+                    let lineItem = {
+                        catalogObjectType: "Product",
+                        catalogObjectId: SalesforceInteractions.cashDom("#timeTableHasBookgInfoId").val().trim(),
+                        price: parseInt(SalesforceInteractions.cashDom(".price").text().replace(/,|원/g, ''), 10),
+                        quantity: 1,
+                    };
+                    purchaseLineItems.push(lineItem);
+                    return purchaseLineItems;
+                },
+            }, */
           },
         },
         {
@@ -341,19 +494,19 @@ if (allowedDomains.includes(domain)) {
         },
         {
           // PC_예약안내
-          name: "PC_예약안내 방문",
+          name: "PC_예약 안내 방문",
           isMatch: () => {
             if (window.location.href.includes("https://www.golfzoncounty.com/gcounty/info/reservepc")) {
               return true;
             }
           },
           interaction: {
-            name: "PC_예약안내 방문",
+            name: "PC_예약 안내 방문",
           },
         },
         {
           // PC_요금안내
-          name: "PC_요금안내 방문",
+          name: "PC_요금 안내 방문",
           isMatch: () => {
             if (window.location.href.includes("feepc")) {
               return true;
@@ -378,7 +531,7 @@ if (allowedDomains.includes(domain)) {
         },
         {
           // PC_이용안내
-          name: "PC_이용안내 방문",
+          name: "PC_이용 안내 방문",
           isMatch: () => {
             if (window.location.href.includes("usepc")) {
               return true;
@@ -400,18 +553,7 @@ if (allowedDomains.includes(domain)) {
             name: "PC_공지사항 방문",
           },
         },
-        {
-          // PC_공고사항
-          name: "PC_공고사항 방문",
-          isMatch: () => {
-            if (window.location.href.includes("https://www.golfzoncounty.com/common/enjoy/notice")) {
-              return true;
-            }
-          },
-          interaction: {
-            name: "PC_공고사항 방문",
-          },
-        },
+
         {
           // PC_서비스이용약관
           name: "PC_서비스이용약관 방문",
@@ -451,40 +593,68 @@ if (allowedDomains.includes(domain)) {
         {
           // PC_골프장요약
           name: "PC_골프장요약 방문",
-          isMatch: () => {
-            if (window.location.href.includes("https://www.golfzoncounty.com/gcounty/info/main")) {
-              return true;
-            }
-          },
+          // isMatch: () => {
+          //     if (window.location.href.includes("https://www.golfzoncounty.com/gcounty/info/main")) {
+          //         return true;
+          //     }
+          // },
+          isMatch: () => new Promise((resolve, reject) => {
+            setTimeout(() => {
+              if (window.location.href.includes("https://www.golfzoncounty.com/gcounty/info/main")) {
+                resolve(true);
+              }
+            }, 1000);
+          }),
           interaction: {
             name: "PC_골프장요약 방문",
-            // catalogObject: {
-            //   type: "GolfZone",
-            //   id: () => {
-            //     return getGolfId()
-            //   },
-            //   attributes: {
-            //     name: SalesforceInteractions.resolvers.fromSelector(".container_1200 .golf_top .golf_tit"), //골프장 이름
-            //     url: () => {
-            //       // const seq = getGolfId();
-            //       const url = window.location.href;
-            //       return url;
-            //     },
-            //     imageUrl: () => {
-            //       const img = SalesforceInteractions.cashDom(".swiper-container .swiper-wrapper .swiper-slide").find(".cimg")[0];
-            //       const backgroundStyle = img.style.background;
-            //       // 3. 정규식을 사용하여 URL 추출
-            //       const urlMatch = backgroundStyle.match(/url\("(.+?)"\)/);
+            /* name: SalesforceInteractions.CatalogObjectInteractionName.ViewCatalogObject,
+            catalogObject: {
+                type: "Product",
+                id: () => {
+                    return SalesforceInteractions.util.resolveWhenTrue.bind(() => {
+                        const urlSearchCode = window.location.search;
+                        const params = new URLSearchParams(urlSearchCode);
+                        const code = params.get("cc_code");
+                        return code;
+                    })
+                },
+                attributes: {
+                    // sku: () => {
 
-            //       // 4. URL 값이 존재하면 추출하여 변수에 저장
-            //       const imgUrl = urlMatch ? urlMatch[1] : null;
-            //       return imgUrl;
-            //     },
-            //     // rating: () => {
-            //     //     return SalesforceInteractions.cashDom(".tour-detail-view .course-info-wrap .review-num-area .star-score").text() //골프장 별점
-            //     // },
-            //   }
-            // },
+                    //     const gcNumName = SalesforceInteractions.cashDom(".gnb ul li > *:nth-child(2) > *:first-child > *:nth-child(2) > *:first-child > *:first-child").attr('href');
+                    //     const gcNum = gcNumName.split('gc_no=')[1].split('&')[0];
+                    //     return gcNum;
+
+                    // },
+                    sku: {
+                        id: getGolfId()
+                    },
+                    //   name: SalesforceInteractions.resolvers.fromJsonLd("name"),
+                    name: SalesforceInteractions.resolvers.fromSelector(".container_1200 .golf_top .golf_tit"), //골프장 이름
+                    description: SalesforceInteractions.resolvers.fromSelector(
+                        ".contArea .desc",
+                        (desc) => desc.trim(),
+                    ),
+                    url: () => {
+                        let url = window.location.href;
+                        url = url.replace("https://www.", "")
+                        return url;
+                    },
+                    imageUrl: () => {
+                        const img = SalesforceInteractions.cashDom(".swiper-container .swiper-wrapper .swiper-slide").find(".cimg")[0];
+                        const backgroundStyle = img.style.background;
+                        // 3. 정규식을 사용하여 URL 추출
+                        const urlMatch = backgroundStyle.match(/url\("(.+?)"\)/);
+
+                        // 4. URL 값이 존재하면 추출하여 변수에 저장
+                        const imgUrl = urlMatch ? urlMatch[1] : null;
+                        return imgUrl;
+                    },
+                    // rating: () => {
+                    //     return SalesforceInteractions.cashDom(".tour-detail-view .course-info-wrap .review-num-area .star-score").text() //골프장 별점
+                    // },
+                }
+            }, */
           },
         },
         {
@@ -515,7 +685,7 @@ if (allowedDomains.includes(domain)) {
               sessionStorage.setItem("log", true);
 
               SalesforceInteractions.sendEvent({
-                interaction: { name: "로그인" },
+                interaction: { name: "로그인 클릭" },
                 user: {
                   attributes: {
                     logBool: true
@@ -535,6 +705,18 @@ if (allowedDomains.includes(domain)) {
           },
           interaction: {
             name: "PC_회원가입 방문",
+          },
+        },
+        {
+          // PC_공고사항
+          name: "PC_공고사항 방문",
+          isMatch: () => {
+            if (window.location.href.includes("https://www.golfzoncounty.com/common/enjoy/notice")) {
+              return true;
+            }
+          },
+          interaction: {
+            name: "PC_공고사항 방문",
           },
         },
         {
@@ -607,6 +789,13 @@ if (allowedDomains.includes(domain)) {
           interaction: {
             name: "PC_예약 내역 방문",
           },
+          listeners: [
+            SalesforceInteractions.listener("click", "#p-cancle .popup-modal-cancel", (el) => {
+              SalesforceInteractions.sendEvent({
+                interaction: { name: "PC_예약취소 클릭" },
+              });
+            }),
+          ]
         },
         {
           // PC_마일리지
@@ -835,6 +1024,14 @@ if (allowedDomains.includes(domain)) {
           interaction: {
             name: "MO_예약 내역 방문",
           },
+          listeners: [
+            SalesforceInteractions.listener("click", ".myReserve .cancel", (el) => {
+              SalesforceInteractions.sendEvent({
+                interaction: { name: "MO_예약취소 클릭" },
+              });
+            }),
+          ]
+
         },
         {
           // MO_예약 안내
@@ -1051,8 +1248,6 @@ if (allowedDomains.includes(domain)) {
               })
             }),
             SalesforceInteractions.listener("click", ".home #content .quickMenu a", (e) => {
-              console.log(e.currentTarget);
-              console.log(e.currentTarget.href);
               const targetElHref = e.currentTarget.href;
 
               if (targetElHref === "https://m.golfzoncounty.com/reserve/main") {
@@ -1113,7 +1308,6 @@ if (allowedDomains.includes(domain)) {
             SalesforceInteractions.listener("click", ".btnContainer button", (el) => {
               sessionStorage.setItem("log", false);
 
-              console.log(el.target);
 
               SalesforceInteractions.sendEvent({
                 interaction: { name: "MO_로그아웃 클릭" },
@@ -1127,12 +1321,118 @@ if (allowedDomains.includes(domain)) {
           ]
         },
         {
+          // MO_예약(티타임선택) 상세 페이지
+          name: "MO_예약(티타임선택) 상세 방문",
+          isMatch: () => new Promise((resolve, reject) => {
+            setTimeout(() => {
+              return SalesforceInteractions.DisplayUtils.pageElementLoaded("#reserveComplete", "html").then(() => {
+                if (document.querySelector("#reserveComplete").style.display !== "block" && window.location.href.includes("https://m.golfzoncounty.com/reserve/main?gc_no")) {
+                  resolve(true);
+                }
+              });
+            }, 1500);
+          }),
+          interaction: {
+            name: "MO_예약(티타임선택) 상세 방문",
+          },
+          listeners: [
+            SalesforceInteractions.listener("click", "#timeList_reserve .reserveList ul li dl dt", (ele) => {
+              const targetEl = ele.target;
+              const gcNoValue = SalesforceInteractions.cashDom(targetEl).closest("dt").attr("data-gc_no");
+              sessionStorage.setItem("recentGcNum", gcNoValue);
+
+              SalesforceInteractions.sendEvent({
+                interaction: {
+                  name: `MO_최근 예약 골프장 번호`,
+                },
+                user: {
+                  attributes: {
+                    recentGcNum: sessionStorage.getItem("recentGcNum"),
+                  },
+                },
+              })
+            }),
+            SalesforceInteractions.listener("click", "#timeList_reserve .reserveList ul li dl dt", (ele) => {
+              const targetEl = ele.target;
+              const gcNoValue = SalesforceInteractions.cashDom(targetEl).closest("dt").attr("data-course_name");
+              sessionStorage.setItem("recentGcName", gcNoValue);
+
+              SalesforceInteractions.sendEvent({
+                interaction: {
+                  name: `MO_최근 예약 골프장명`,
+                },
+                user: {
+                  attributes: {
+                    recentGcName: sessionStorage.getItem("recentGcName"),
+                  },
+                },
+              })
+            }),
+            SalesforceInteractions.listener("click", "#timeList_reserve .reserveList ul li dl dt", (ele) => {
+              function formatDate(dateString) {
+                // 날짜 문자열에서 연도, 월, 일을 추출
+                const regex = /(\d{4})년\s(\d{1,2})월\s(\d{1,2})일/;
+                const match = dateString.match(regex);
+
+                if (!match) {
+                  throw new Error("날짜 형식이 잘못되었습니다.");
+                }
+
+                const year = match[1]; // 연도
+                const month = match[2].padStart(2, "0"); // 월 (두 자리로 변환)
+                const day = match[3].padStart(2, "0"); // 일 (두 자리로 변환)
+
+                // "YYYYMMDD" 형식으로 반환
+                return `${year}${month}${day}`;
+              }
+              const targetEl = ele.target;
+              const gcNoValue = SalesforceInteractions.cashDom(targetEl).closest("dt").attr("data-tee_date");
+              const gcDateResult = formatDate(gcNoValue);
+              sessionStorage.setItem("recentGcDate", gcDateResult);
+
+
+              SalesforceInteractions.sendEvent({
+                interaction: {
+                  name: `MO_최근 예약 골프장 날짜`,
+                },
+                user: {
+                  attributes: {
+                    recentGcDate: sessionStorage.getItem("recentGcDate"),
+                  },
+                },
+              })
+            }),
+            SalesforceInteractions.listener("click", "#timeList_reserve .reserveList ul li dl dt", (ele) => {
+              const urlParams = new URL(location.href).searchParams;
+              const areaCode = urlParams.get('area_code');
+              sessionStorage.setItem("recentGcArea", areaCode);
+
+              SalesforceInteractions.sendEvent({
+                interaction: {
+                  name: `MO_최근 예약 골프장 지역`,
+                },
+                user: {
+                  attributes: {
+                    recentGcArea: sessionStorage.getItem("recentGcArea"),
+                  },
+                },
+              })
+            }),
+
+          ],
+          contentZones: [
+            {
+              name: "C11_MO_자주가는 골프장"
+            },
+          ]
+        },
+        {
           // MO_예약(티타임선택) 페이지
           name: "MO_예약(티타임선택) 방문",
           isMatch: () => new Promise((resolve, reject) => {
             setTimeout(() => {
               return SalesforceInteractions.DisplayUtils.pageElementLoaded("#reserveComplete", "html").then(() => {
-                if (document.querySelector("#reserveComplete").style.display !== "block" && window.location.href.includes("https://m.golfzoncounty.com/reserve/main")) {
+                if (document.querySelector("#reserveComplete").style.display !== "block" && window.location.href.includes("https://m.golfzoncounty.com/reserve/main") && (window.location.search !== "" || window.location.search !== null)) {
                   resolve(true);
                 }
               });
@@ -1156,7 +1456,7 @@ if (allowedDomains.includes(domain)) {
 
               SalesforceInteractions.sendEvent({
                 interaction: {
-                  name: `recentGcNum`,
+                  name: `MO_최근 예약 골프장 번호`,
                 },
                 user: {
                   attributes: {
@@ -1165,13 +1465,56 @@ if (allowedDomains.includes(domain)) {
                 },
               })
             }),
-            SalesforceInteractions.listener("click", "table.data-table", (ele) => {
+            SalesforceInteractions.listener("click", "#timeList_reserve", (ele) => {
+              const targetEl = ele.target;
+              const gcNoValue = SalesforceInteractions.cashDom(targetEl).closest("dl").attr("data-work_date");
+              sessionStorage.setItem("recentGcDate", gcNoValue);
+
+              SalesforceInteractions.sendEvent({
+                interaction: {
+                  name: `MO_최근 예약 골프장 날짜`,
+                },
+                user: {
+                  attributes: {
+                    recentGcDate: sessionStorage.getItem("recentGcNum"),
+                  },
+                },
+              })
+            }),
+            SalesforceInteractions.listener("click", "#timeList_reserve", (ele) => {
 
               const targetEl = ele.target;
-              const gcDateValue = SalesforceInteractions.cashDom(targetEl).closest("a").attr("data-date");
-              sessionStorage.setItem("recentGcDate", gcDateValue);
+              const gcNoValue = SalesforceInteractions.cashDom(targetEl).closest("dl").attr("data-cc_name");
+              sessionStorage.setItem("recentGcName", gcNoValue);
 
-            })
+              SalesforceInteractions.sendEvent({
+                interaction: {
+                  name: `MO_최근 예약 골프장명`,
+                },
+                user: {
+                  attributes: {
+                    recentGcName: sessionStorage.getItem("recentGcName"),
+                  },
+                },
+              })
+            }),
+            SalesforceInteractions.listener("click", "#timeList_reserve", (ele) => {
+
+              const urlParams = new URL(location.href).searchParams;
+              const areaCode = urlParams.get('area_code');
+              sessionStorage.setItem("recentGcArea", areaCode);
+
+              SalesforceInteractions.sendEvent({
+                interaction: {
+                  name: `MO_최근 예약 골프장 지역`,
+                },
+                user: {
+                  attributes: {
+                    recentGcArea: sessionStorage.getItem("recentGcArea"),
+                  },
+                },
+              })
+            }),
           ],
           contentZones: [
             {
@@ -1211,18 +1554,6 @@ if (allowedDomains.includes(domain)) {
             name: "MO_이벤트 방문",
           },
         },
-        // {
-        //     // MO_예약 확인/정보 페이지
-        //     name: "MO_예약 확인/정보 방문",
-        //     isMatch: () => {
-        //         if (window.location.href.includes("https://m.golfzoncounty.com/reserve/main") && SalesforceInteractions.cashDom("#reserveConfirm .btnContainer .btn2 button").text() === "예약완료") {
-        //             return true;
-        //         }
-        //     },
-        //     interaction: {
-        //         name: "MO_예약 확인/정보 방문",
-        //     },
-        // },
         {
           // MO_골프텔 페이지
           name: "MO_골프텔 방문",
@@ -1285,15 +1616,54 @@ if (allowedDomains.includes(domain)) {
           },
         },
         {
-          // MO_골프장 요약
+          // MO_골프장요약
           name: "MO_골프장 요약 방문",
-          isMatch: () => {
-            if (window.location.href.includes("https://m.golfzoncounty.com/gcounty/info/main")) {
-              return true;
-            }
-          },
+          isMatch: () => new Promise((resolve, reject) => {
+            setTimeout(() => {
+              if (window.location.href.includes("https://m.golfzoncounty.com/gcounty/info/main")) {
+                resolve(true);
+              }
+            }, 1000);
+          }),
           interaction: {
             name: "MO_골프장 요약 방문",
+            /* name: SalesforceInteractions.CatalogObjectInteractionName.ViewCatalogObject,
+            catalogObject: {
+                type: "Product",
+                id: () => {
+                    return SalesforceInteractions.util.resolveWhenTrue.bind(() => {
+                        // getGolfId()
+                        const urlSearchCode = window.location.search;
+                        const params = new URLSearchParams(urlSearchCode);
+                        const code = params.get("cc_code");
+                        return code;
+
+
+                    })
+                },
+                attributes: {
+                    //   name: SalesforceInteractions.resolvers.fromJsonLd("name"),
+                    name: SalesforceInteractions.resolvers.fromSelector("#wrap #top h2 > a"), //골프장 이름
+                    url: () => {
+                        let url = window.location.href;
+                        url = url.replace("https://m.", "")
+                        return url;
+                    },
+                    imageUrl: () => {
+                        const img = SalesforceInteractions.cashDom(".swiper-container .swiper-wrapper .swiper-slide")[0];
+                        const backgroundStyle = img.style.backgroundImage;
+                        // 3. 정규식을 사용하여 URL 추출
+                        const urlMatch = backgroundStyle.match(/url\("(.+?)"\)/);
+
+                        // 4. URL 값이 존재하면 추출하여 변수에 저장
+                        const imgUrl = urlMatch ? urlMatch[1] : null;
+                        return imgUrl;
+                    },
+                    // rating: () => {
+                    //     return SalesforceInteractions.cashDom(".tour-detail-view .course-info-wrap .review-num-area .star-score").text() //골프장 별점
+                    // },
+                }
+            }, */
           },
         },
         {
@@ -1348,7 +1718,6 @@ if (allowedDomains.includes(domain)) {
           SalesforceInteractions.reinit();
         }
       }, 1500);
-      console.log(url);
     }
 
     handleSPAPageChange();
@@ -1372,7 +1741,6 @@ if (allowedDomains.includes(domain)) {
 
               // targetNode1에 대해 display 속성 변경 시
               if (mutation.target === targetNode1 && previousDisplayValue1 !== newDisplayValue) {
-                console.log(`Display 변경 감지 (targetNode1): Old: ${previousDisplayValue1}, New: ${newDisplayValue}`);
                 previousDisplayValue1 = newDisplayValue;
                 setTimeout(() => {
                   SalesforceInteractions.reinit();
@@ -1381,7 +1749,6 @@ if (allowedDomains.includes(domain)) {
 
               // targetNode2에 대해 display 속성 변경 시
               if (mutation.target === targetNode2 && previousDisplayValue2 !== newDisplayValue) {
-                console.log(`Display 변경 감지 (targetNode2): Old: ${previousDisplayValue2}, New: ${newDisplayValue}`);
                 previousDisplayValue2 = newDisplayValue;
                 setTimeout(() => {
                   SalesforceInteractions.reinit();
